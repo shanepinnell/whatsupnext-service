@@ -62,6 +62,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_19_084223) do
     t.text "config"
     t.datetime "created_at", null: false
     t.integer "credential_version", default: 0, null: false
+    t.datetime "last_reported_at"
     t.integer "provider"
     t.integer "room_id", null: false
     t.datetime "updated_at", null: false

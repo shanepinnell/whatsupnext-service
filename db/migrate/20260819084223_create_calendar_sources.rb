@@ -6,6 +6,7 @@ class CreateCalendarSources < ActiveRecord::Migration[8.1]
       t.integer :credential_version, null: false, default: 0
       t.string :webhook_subscription_id
       t.datetime :webhook_expires_at
+      t.datetime :last_reported_at
       t.references :room, null: false, foreign_key: true, index: { unique: true }
 
       t.timestamps

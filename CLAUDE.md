@@ -38,14 +38,15 @@ this repository.
     next to `credentials.yml.enc` in the same directory doesn't actually
     protect it either).
   - Retrieve and run via a personal shell function (in your own
-    `~/.zshrc`, not part of this repo):
+    `~/.zshrc`, not part of this repo) — generic over any command, not
+    just `bin/rails` (`bin/dev` needs it too):
     ```
-    wun-rails() {
+    wun-run() {
       DOTENV_PRIVATE_KEY=$(security find-generic-password -a whatsupnext-service -s whatsupnext-dotenvx-key -w 2>/dev/null) \
-        dotenvx run -- bin/rails "$@"
+        dotenvx run -- "$@"
     }
     ```
-    Usage: `wun-rails test`, `wun-rails server`, `wun-rails console`.
+    Usage: `wun-run bin/dev`, `wun-run bin/rails test`, `wun-run bin/rails server`.
   - See `config/initializers/active_record_encryption.rb` for which env
     vars `.env` needs to contain.
 
