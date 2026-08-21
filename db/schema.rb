@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_19_084223) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_21_034022) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -71,6 +71,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_19_084223) do
     t.index ["room_id"], name: "index_calendar_sources_on_room_id", unique: true
   end
 
+  create_table "devices", force: :cascade do |t|
+    t.string "api_key_digest"
+    t.string "apns_token"
+    t.datetime "created_at", null: false
+    t.string "device_identifier"
+    t.datetime "last_seen_at"
+    t.string "mdm_device_id"
+    t.datetime "paired_at"
+    t.string "pairing_code"
+    t.datetime "pairing_code_expires_at"
+    t.integer "room_id"
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["device_identifier"], name: "index_devices_on_device_identifier", unique: true
+    t.index ["mdm_device_id"], name: "index_devices_on_mdm_device_id", unique: true
+    t.index ["room_id"], name: "index_devices_on_room_id"
+  end
+
   create_table "floors", force: :cascade do |t|
     t.integer "building_id", null: false
     t.datetime "created_at", null: false
@@ -109,6 +127,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_19_084223) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "buildings", "sites"
   add_foreign_key "calendar_sources", "rooms"
+  add_foreign_key "devices", "rooms"
   add_foreign_key "floors", "buildings"
   add_foreign_key "rooms", "floors"
   add_foreign_key "sites", "organizations"
