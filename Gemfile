@@ -26,6 +26,12 @@ gem "positioning"
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
+# Admin UI login via a generic OpenID Connect strategy (not a provider-specific gem) [https://rubygems.org/gems/omniauth_openid_connect]
+gem "omniauth"
+gem "omniauth_openid_connect"
+# Protects the OmniAuth request phase from CSRF (CVE-2015-9284) [https://rubygems.org/gems/omniauth-rails_csrf_protection]
+gem "omniauth-rails_csrf_protection"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
