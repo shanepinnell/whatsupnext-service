@@ -43,4 +43,4 @@ sourced from `ENV`, decrypted locally via dotenvx. See
 
 ## License
 
-TBD.
+[MIT](LICENSE)
