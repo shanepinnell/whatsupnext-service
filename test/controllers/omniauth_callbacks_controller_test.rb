@@ -25,4 +25,21 @@ class OmniauthCallbacksControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, user.sessions.count
     assert cookies[:session_id].present?
   end
+
+  test "signs in the existing User on a repeat OIDC login" do
+    user = users(:one)
+
+    OmniAuth.config.mock_auth[:openid_connect] = OmniAuth::AuthHash.new(
+      provider: "openid_connect",
+      uid: "abc123",
+      info: { email: user.email_address }
+    )
+
+    assert_no_difference "User.count" do
+      get "/auth/openid_connect/callback"
+    end
+
+    assert_equal 1, user.reload.sessions.count
+    assert cookies[:session_id].present?
+  end
 end
