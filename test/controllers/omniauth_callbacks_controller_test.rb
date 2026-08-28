@@ -42,4 +42,14 @@ class OmniauthCallbacksControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, user.reload.sessions.count
     assert cookies[:session_id].present?
   end
+
+  test "redirects to sign in with an alert on OIDC auth failure" do
+    OmniAuth.config.mock_auth[:openid_connect] = :invalid_credentials
+
+    get "/auth/openid_connect/callback"
+    follow_redirect!
+
+    assert_redirected_to new_session_path
+    assert_equal "Sign-in failed: Invalid credentials", flash[:alert]
+  end
 end
