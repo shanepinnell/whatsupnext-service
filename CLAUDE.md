@@ -26,27 +26,37 @@ this repository.
     becoming public some other way (zipped for a backup, synced to cloud
     storage) — encryption is what actually makes that safe, not the
     directory it happens to live in.
-  - **The decryption key (`DOTENV_PRIVATE_KEY`) lives in macOS Keychain,
-    not as a file anywhere** — generated as a byproduct of the `encrypt`
-    step above (in `.env.keys`), stored once via `security
-    add-generic-password -U -a whatsupnext-service -s
-    whatsupnext-dotenvx-key -w`, then `.env.keys` is deleted. Keychain is
-    genuinely separate from the repo/filesystem-backup risk the encrypted
-    `.env` itself is protected against by encryption — this is the one
-    thing that must never be co-located with the ciphertext it decrypts,
-    or the encryption is theater (see: why `config/master.key` sitting
-    next to `credentials.yml.enc` in the same directory doesn't actually
-    protect it either).
-  - Retrieve and run via a personal shell function (in your own
-    `~/.zshrc`, not part of this repo) — generic over any command, not
-    just `bin/rails` (`bin/dev` needs it too):
+  - **The decryption key (`DOTENV_PRIVATE_KEY`) lives in whatever local
+    secret manager you already have, not as a file anywhere** — generated
+    as a byproduct of the `encrypt` step above (in `.env.keys`), stored
+    once (macOS Keychain's `security add-generic-password`, Linux's
+    `secret-tool store`, a password manager CLI — pick whatever's
+    actually installed), then `.env.keys` is deleted. Deliberately not
+    tied to one specific tool: this repo ships to self-hosting customers
+    on whatever OS they run, and `dotenvx` itself only cares that
+    `DOTENV_PRIVATE_KEY` ends up in the environment, not how it got
+    there. The secret manager is genuinely separate from the
+    repo/filesystem-backup risk the encrypted `.env` itself is protected
+    against by encryption — this is the one thing that must never be
+    co-located with the ciphertext it decrypts, or the encryption is
+    theater (see: why `config/master.key` sitting next to
+    `credentials.yml.enc` in the same directory doesn't actually protect
+    it either).
+  - **Running commands with the decrypted secrets**: `bin/unlock` looks
+    up `DOTENV_PRIVATE_KEY` (tries macOS Keychain via `security`, then
+    Linux's `secret-tool`, whichever is actually installed) and runs the
+    given command through `dotenvx run --`:
     ```
-    wun-run() {
-      DOTENV_PRIVATE_KEY=$(security find-generic-password -a whatsupnext-service -s whatsupnext-dotenvx-key -w 2>/dev/null) \
-        dotenvx run -- "$@"
-    }
+    bin/unlock bin/rails test
+    bin/unlock bin/dev
     ```
-    Usage: `wun-run bin/dev`, `wun-run bin/rails test`, `wun-run bin/rails server`.
+    If neither known secret store is found, `bin/unlock` doesn't fail
+    silently — it prints the manual fallback so you can export
+    `DOTENV_PRIVATE_KEY` yourself from whatever secret manager you
+    actually use, then run `dotenvx run --` directly:
+    ```
+    DOTENV_PRIVATE_KEY=$(<your retrieval command>) dotenvx run -- bin/rails test
+    ```
   - See `config/initializers/active_record_encryption.rb` for which env
     vars `.env` needs to contain.
 

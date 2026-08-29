@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ -z "${DOTENV_PRIVATE_KEY:-}" ]]; then
+  if [[ "$(uname)" == "Darwin" ]] && command -v security >/dev/null 2>&1; then
+    DOTENV_PRIVATE_KEY=$(security find-generic-password -a whatsupnext-service -s whatsupnext-dotenvx-key -w 2>/dev/null || true)
+  elif command -v secret-tool >/dev/null 2>&1; then
+    DOTENV_PRIVATE_KEY=$(secret-tool lookup service whatsupnext-service key whatsupnext-dotenvx-key 2>/dev/null || true)
+  fi
+fi
+
+if [[ -z "${DOTENV_PRIVATE_KEY:-}" ]]; then
+  echo "unlock: couldn't find DOTENV_PRIVATE_KEY via a known secret store." >&2
+  echo "Export it yourself from your own secret manager instead, e.g.:" >&2
+  echo "  DOTENV_PRIVATE_KEY=\$(<your retrieval command>) dotenvx run -- $*" >&2
+  exit 1
+fi
+
+export DOTENV_PRIVATE_KEY
+exec dotenvx run -- "$@"
