@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+  resources :sites do
+    resources :buildings do
+      resources :floors do
+        resources :rooms
+      end
+    end
+  end
+
   root "organizations#show"
   resource :session
   get "/auth/:provider/callback", to: "omniauth_callbacks#create"

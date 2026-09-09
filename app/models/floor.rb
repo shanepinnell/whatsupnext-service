@@ -1,6 +1,6 @@
 class Floor < ApplicationRecord
   belongs_to :building
-  has_many :rooms
+  has_many :rooms, dependent: :restrict_with_error
 
   positioned on: :building
 

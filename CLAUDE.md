@@ -8,8 +8,11 @@ this repository.
 
 - **Testing framework**: Minitest (Rails' default), not RSpec.
 - **Scaffolding**: prefer Rails' built-in generators (models, migrations,
-  etc.) over hand-writing files from scratch — edit/extend generator
-  output rather than writing it by hand.
+  controllers, views, `scaffold_controller`, etc.) over hand-writing files
+  from scratch — edit/extend generator output rather than writing it by
+  hand. This includes routes: let a generator add its own route entry
+  first, then hand-adjust nesting/shallow structure afterward, rather
+  than hand-authoring `routes.rb` entries upfront.
 - **Local secrets (Active Record encryption keys, etc.)**: never in
   `credentials.yml.enc` — this repo is public. Sourced from `ENV` in
   every environment; production gets them from Kamal secrets. For local
