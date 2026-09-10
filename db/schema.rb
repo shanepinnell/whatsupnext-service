@@ -55,6 +55,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_21_044510) do
     t.integer "site_id", null: false
     t.string "timezone"
     t.datetime "updated_at", null: false
+    t.index ["site_id", "name"], name: "index_buildings_on_site_id_and_name", unique: true
     t.index ["site_id"], name: "index_buildings_on_site_id"
   end
 
@@ -129,6 +130,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_21_044510) do
     t.string "name"
     t.integer "organization_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["organization_id", "name"], name: "index_sites_on_organization_id_and_name", unique: true
     t.index ["organization_id"], name: "index_sites_on_organization_id"
   end
 
