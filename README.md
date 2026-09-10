@@ -9,8 +9,9 @@ contract.
 
 ## Status
 
-Early. Admin login (OIDC) and the base data model exist; the admin UI
-for managing rooms/buildings/devices isn't built yet.
+Early. Admin login (OIDC), the base data model, and CRUD for the
+physical hierarchy (sites/buildings/floors/rooms) exist; device
+pairing/management isn't built yet.
 
 ## Stack
 
@@ -31,9 +32,9 @@ Authentication section.
 ## Local development
 
 ```
-bin/setup      # installs gems, prepares the database
-bin/dev        # Rails server + Tailwind watcher
-bin/rails test # Minitest suite
+bin/setup                  # installs gems, prepares the database
+bin/dev                    # Rails server + Tailwind watcher
+bin/unlock bin/rails test  # Minitest suite (needs decrypted secrets)
 ```
 
 Secrets (Active Record encryption keys, `SECRET_KEY_BASE`, OIDC client
