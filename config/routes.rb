@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   end
 
   root "organizations#show"
+  resource :organization, only: [ :create, :edit, :update ]
   resource :session
   get "/auth/:provider/callback", to: "omniauth_callbacks#create"
   get "/auth/failure", to: "omniauth_callbacks#failure"
