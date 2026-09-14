@@ -42,6 +42,14 @@ credentials) are never committed — this repo is public. They're
 sourced from `ENV`, decrypted locally via dotenvx. See
 [`CLAUDE.md`](CLAUDE.md) for the full setup.
 
+Admin login needs a reachable OIDC provider matching `OIDC_ISSUER`.
+Locally that's typically a mock OIDC server (e.g. `oidc-server-mock`)
+run via Docker Compose rather than a real IdP. Start it with
+`docker compose up -d` before testing login, and confirm it's up by
+curling `$OIDC_ISSUER/.well-known/openid-configuration` — a
+`Connection refused` there means the mock server isn't running, not
+an app bug.
+
 ## License
 
 [MIT](LICENSE)
