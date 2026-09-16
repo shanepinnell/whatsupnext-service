@@ -1,0 +1,12 @@
+<% if notice.present? %>
+  <div data-controller="flash" data-flash-auto-dismiss-value="true" class="flex items-center justify-between gap-3 py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-flex" id="notice">
+    <%= notice %>
+    <button type="button" data-action="flash#dismiss" class="text-green-400 hover:text-green-600 leading-none cursor-pointer" aria-label="Dismiss">&times;</button>
+  </div>
+<% end %>
+<% if alert.present? %>
+  <div data-controller="flash" class="flex items-center justify-between gap-3 py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-md inline-flex" id="alert">
+    <%= alert %>
+    <button type="button" data-action="flash#dismiss" class="text-red-400 hover:text-red-600 leading-none cursor-pointer" aria-label="Dismiss">&times;</button>
+  </div>
+<% end %>

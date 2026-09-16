@@ -1,6 +1,6 @@
 <div id="<%= dom_id site %>" class="w-full sm:w-auto my-5 space-y-5">
-  <div>
-    <strong class="block font-medium mb-1">Name:</strong>
-    <%= site.name %>
+  <div class="flex items-center gap-2">
+    <%= icon "map-pin", class: "h-5 w-5" %>
+    <%= link_to site.name, site, class: "hover:underline" %>
   </div>
 </div>

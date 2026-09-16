@@ -25,7 +25,15 @@
   </head>
 
   <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+    <% if authenticated? %>
+      <header class="w-full border-b border-gray-200 px-5 py-4 flex justify-between items-center">
+        <%= link_to @organization&.name, root_path, class: "font-bold text-lg hover:underline" %>
+        <%= button_to "Log out", session_path, method: :delete, class: "text-gray-500 hover:text-gray-700 text-sm font-medium bg-transparent border-0 p-0 cursor-pointer" %>
+      </header>
+    <% end %>
+
+    <main class="container mx-auto mt-8 px-5 flex flex-col">
+      <%= render "shared/flash" %>
       <%= yield %>
     </main>
   </body>

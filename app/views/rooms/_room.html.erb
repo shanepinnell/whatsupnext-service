@@ -1,8 +1,10 @@
 <div id="<%= dom_id room %>" class="w-full sm:w-auto my-5 space-y-5">
-  <div>
-    <strong class="block font-medium mb-1">Name:</strong>
-    <%= room.name %>
-  </div>
+  <% if local_assigns.fetch(:show_name, true) %>
+    <div class="flex items-center gap-2">
+      <%= icon "stop", class: "h-5 w-5" %>
+      <%= link_to room.name, [ @site, @building, @floor, room ], class: "hover:underline" %>
+    </div>
+  <% end %>
   <div>
     <strong class="block font-medium mb-1">Background image:</strong>
     <%= link_to room.background_image.filename, room.background_image, class: "text-gray-700 underline hover:no-underline" if room.background_image.attached? %>

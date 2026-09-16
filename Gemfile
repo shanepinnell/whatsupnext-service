@@ -22,6 +22,8 @@ gem "jbuilder"
 gem "lexxy"
 # Manages sorting/reordering for the Floor position field [https://github.com/brendon/positioning]
 gem "positioning"
+# Icon library-agnostic view helper, sources SVGs from their own repos [https://github.com/Rails-Designer/rails_icons]
+gem "rails_icons"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
