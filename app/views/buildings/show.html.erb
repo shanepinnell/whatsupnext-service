@@ -1,15 +1,26 @@
 <% content_for :title, "Showing building" %>
 
 <div class="md:w-2/3 w-full">
+  <%= render "shared/breadcrumbs", crumbs: [[@organization.name, root_path], [@site.name, site_path(@site)], ["Buildings", site_buildings_path(@site)]] %>
+
   <% if notice.present? %>
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
   <% end %>
 
-  <h1 class="font-bold text-4xl">Showing building</h1>
+  <h1 class="font-bold text-4xl"><%= @building.name %></h1>
 
   <%= render @building %>
 
   <%= link_to "Edit this building", edit_site_building_path(@site, @building), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <%= link_to "Manage floors", site_building_floors_path(@site, @building), class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
   <%= link_to "Back to buildings", site_buildings_path(@site), class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
   <%= button_to "Destroy this building", [ @site, @building ], method: :delete, form_class: "sm:inline-block mt-2 sm:mt-0 sm:ml-2", class: "w-full rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+
+  <h2 class="font-bold text-2xl mt-8">Floors</h2>
+  <ul class="mt-4 space-y-2">
+    <% @building.floors.each do |floor| %>
+      <li><%= link_to floor.name, [ @site, @building, floor ], class: "text-gray-700 underline hover:no-underline" %></li>
+    <% end %>
+  </ul>
+  <p class="text-gray-500 mt-4"><% if @building.floors.none? %>No floors yet.<% end %></p>
 </div>

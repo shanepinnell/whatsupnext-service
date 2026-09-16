@@ -1,7 +1,7 @@
 <% content_for :title, "Editing building" %>
 
 <div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Editing building</h1>
+  <h1 class="font-bold text-4xl"><%= @building.name %></h1>
 
   <%= render "form", building: @building %>
 

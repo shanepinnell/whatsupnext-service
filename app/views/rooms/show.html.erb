@@ -1,11 +1,13 @@
 <% content_for :title, "Showing room" %>
 
 <div class="md:w-2/3 w-full">
+  <%= render "shared/breadcrumbs", crumbs: [[@organization.name, root_path], [@site.name, site_path(@site)], [@building.name, site_building_path(@site, @building)], [@floor.name, site_building_floor_path(@site, @building, @floor)], ["Rooms", site_building_floor_rooms_path(@site, @building, @floor)]] %>
+
   <% if notice.present? %>
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
   <% end %>
 
-  <h1 class="font-bold text-4xl">Showing room</h1>
+  <h1 class="font-bold text-4xl"><%= @room.name %></h1>
 
   <%= render @room %>
 

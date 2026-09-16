@@ -7,6 +7,15 @@
     <% end %>
 
     <%= link_to "Edit", edit_organization_path %>
+    <%= link_to "Manage sites", sites_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+
+    <h2 class="font-bold text-2xl mt-8">Sites</h2>
+    <ul class="mt-4 space-y-2">
+      <% @organization.sites.each do |site| %>
+        <li><%= link_to site.name, site, class: "text-gray-700 underline hover:no-underline" %></li>
+      <% end %>
+    </ul>
+    <p class="text-gray-500 mt-4"><% if @organization.sites.none? %>No sites yet.<% end %></p>
   </div>
 <% else %>
   <div>
