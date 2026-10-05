@@ -8,7 +8,7 @@ Rails.application.routes.draw do
       end
     end
   end
-  resources :devices, only: %i[ index show ]
+  resources :devices, only: %i[ index show edit update ]
 
   root "organizations#show"
   resource :organization, only: [ :create, :edit, :update ]

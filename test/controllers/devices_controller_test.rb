@@ -28,4 +28,29 @@ class DevicesControllerTest < ActionDispatch::IntegrationTest
     get device_url(id: 0)
     assert_response :not_found
   end
+
+  test "should get edit" do
+    device = Device.create!(device_identifier: SecureRandom.uuid, status: :paired, room: rooms(:summit), paired_at: 1.day.ago)
+
+    get edit_device_url(device)
+    assert_response :success
+  end
+
+  test "should move a device to another room" do
+    device = Device.create!(device_identifier: SecureRandom.uuid, status: :paired, room: rooms(:summit), paired_at: 1.day.ago)
+    other_room = floors(:penthouse).rooms.create!(name: "Base Camp")
+
+    patch device_url(device), params: { device: { room_id: other_room.id } }
+
+    assert_redirected_to device_url(device)
+    assert_equal other_room, device.reload.room
+  end
+
+  test "update ignores the name" do
+    device = Device.create!(device_identifier: SecureRandom.uuid, status: :paired, room: rooms(:summit), paired_at: 1.day.ago, name: "Lobby")
+
+    patch device_url(device), params: { device: { room_id: device.room_id, name: "Hacked" } }
+
+    assert_equal "Lobby", device.reload.name
+  end
 end
