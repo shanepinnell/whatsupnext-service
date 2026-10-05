@@ -40,4 +40,16 @@ class DeviceClaimsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "That code isn't valid or has expired. Check the code on the TV and try again.", flash[:alert]
     assert device.reload.pending?
   end
+
+  test "requires sign-in and pairs nothing when signed out" do
+    sign_out
+    device = Device.create!(device_identifier: SecureRandom.uuid)
+    device.issue_pairing_code
+    device.save!
+
+    post site_building_floor_room_device_claim_url(@site, @building, @floor, @room), params: { code: device.pairing_code }
+
+    assert_redirected_to new_session_url
+    assert device.reload.pending?
+  end
 end

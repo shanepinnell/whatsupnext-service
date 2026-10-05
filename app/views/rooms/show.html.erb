@@ -24,4 +24,21 @@
   </div>
 
   <%= render @room, show_name: false %>
+
+  <h2 class="font-bold text-2xl mt-8 flex items-center gap-3">
+    <%= icon "tv", class: "h-7 w-7" %> Devices
+  </h2>
+  <% if @room.devices.paired.any? %>
+    <ul class="mt-4 pl-4 space-y-2">
+      <% @room.devices.paired.order(:paired_at).each do |device| %>
+        <li class="flex items-center gap-2 text-gray-700">
+          <%= icon "tv", class: "h-4 w-4" %> Apple TV, paired <%= time_ago_in_words(device.paired_at) %> ago
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <%= link_to new_site_building_floor_room_device_claim_path(@site, @building, @floor, @room), class: "mt-4 inline-flex items-center gap-2 rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium" do %>
+    <%= icon "plus", class: "h-5 w-5" %> Pair a device
+  <% end %>
 </div>
