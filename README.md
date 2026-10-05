@@ -42,11 +42,33 @@ credentials) are never committed — this repo is public. They're
 sourced from `ENV`, decrypted locally via dotenvx. See
 [`CLAUDE.md`](CLAUDE.md) for the full setup.
 
+### Mock OIDC provider
+
 Admin login needs a reachable OIDC provider matching `OIDC_ISSUER`.
-Locally that's typically a mock OIDC server (e.g. `oidc-server-mock`)
-run via Docker Compose rather than a real IdP. Start it with
-`docker compose up -d` before testing login, and confirm it's up by
-curling `$OIDC_ISSUER/.well-known/openid-configuration` — a
+Locally, use a mock server rather than a real IdP —
+[`oidc-server-mock`](https://github.com/Soluto/oidc-server-mock) via
+Docker Compose. Its config lives outside this repo (it's per-developer
+tooling, not part of the app), e.g. in `~/services/oidc-mock/`:
+
+- `docker-compose.yml` — runs `ghcr.io/soluto/oidc-server-mock` on
+  `https://localhost:8443`, mounting the files below
+- `clients.json` — one client whose ID/secret match `OIDC_CLIENT_ID` /
+  `OIDC_CLIENT_SECRET`, with redirect URI
+  `http://localhost:3000/auth/openid_connect/callback` and scopes
+  `openid email profile`
+- `users.json` — test login(s), each with `email` and
+  `email_verified` claims
+- a TLS cert/key for `localhost` (e.g. from `mkcert localhost
+  127.0.0.1 ::1`), so Ruby's HTTP client trusts the issuer
+
+Start it before testing login:
+
+```
+docker compose -f ~/services/oidc-mock/docker-compose.yml up -d
+```
+
+and confirm it's up by curling
+`$OIDC_ISSUER/.well-known/openid-configuration`. A
 `Connection refused` there means the mock server isn't running, not
 an app bug.
 
