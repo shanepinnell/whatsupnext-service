@@ -21,6 +21,13 @@ class BuildingTest < ActiveSupport::TestCase
     assert_includes building.errors[:timezone], "can't be blank"
   end
 
+  test "invalid with an unrecognized timezone" do
+    site = Site.new(name: "Downtown Campus")
+    building = Building.new(name: "Tower 1", timezone: "Not/AZone", site: site)
+    assert_not building.valid?
+    assert_includes building.errors[:timezone], "is not included in the list"
+  end
+
   test "invalid without a site" do
     building = Building.new(name: "Tower 1", timezone: "America/Chicago")
     assert_not building.valid?
