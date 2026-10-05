@@ -25,7 +25,10 @@ class Device < ApplicationRecord
   end
 
   def issue_pairing_code
-    self.pairing_code = SecureRandom.random_number(100_000..999_999).to_s
+    self.pairing_code = loop do
+      code = SecureRandom.random_number(100_000..999_999).to_s
+      break code unless Device.where(pairing_code: code).where("pairing_code_expires_at > ?", Time.current).exists?
+    end
     self.pairing_code_expires_at = PAIRING_CODE_TTL.from_now
   end
 

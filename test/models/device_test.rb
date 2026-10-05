@@ -103,4 +103,13 @@ class DeviceTest < ActiveSupport::TestCase
       assert_equal 15.minutes.from_now, device.pairing_code_expires_at
     end
   end
+
+  test "issue_pairing_code avoids codes already held by an unexpired device" do
+    Device.create!(pairing_code: "123456", pairing_code_expires_at: 10.minutes.from_now)
+    SecureRandom.stub(:random_number, ->(_) { @calls = (@calls || 0) + 1; @calls == 1 ? 123456 : 654321 }) do
+      device = Device.new
+      device.issue_pairing_code
+      assert_equal "654321", device.pairing_code
+    end
+  end
 end
