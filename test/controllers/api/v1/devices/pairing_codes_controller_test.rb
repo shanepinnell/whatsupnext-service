@@ -66,4 +66,30 @@ class Api::V1::Devices::PairingCodesControllerTest < ActionDispatch::Integration
     assert_response :bad_request
     assert_equal "missing_device_identifier", response.parsed_body["error"]
   end
+
+  test "sets the device name from the request body" do
+    identifier = SecureRandom.uuid
+
+    post api_v1_devices_pairing_codes_url, params: { name: "Shane’s Apple TV" }, headers: { "X-Device-Identifier" => identifier }, as: :json
+
+    assert_response :created
+    assert_equal "Shane’s Apple TV", Device.find_by!(device_identifier: identifier).name
+  end
+
+  test "updates the device name on reissue" do
+    device = Device.create!(device_identifier: SecureRandom.uuid, name: "Apple TV")
+
+    post api_v1_devices_pairing_codes_url, params: { name: "Lobby" }, headers: { "X-Device-Identifier" => device.device_identifier }, as: :json
+
+    assert_response :created
+    assert_equal "Lobby", device.reload.name
+  end
+
+  test "keeps the existing name when a reissue omits it" do
+    device = Device.create!(device_identifier: SecureRandom.uuid, name: "Lobby")
+
+    post api_v1_devices_pairing_codes_url, headers: { "X-Device-Identifier" => device.device_identifier }, as: :json
+
+    assert_equal "Lobby", device.reload.name
+  end
 end
