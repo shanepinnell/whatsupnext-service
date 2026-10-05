@@ -94,4 +94,13 @@ class DeviceTest < ActiveSupport::TestCase
     device = Device.create!
     assert_not device.authenticate_api_key("anything")
   end
+
+  test "issue_pairing_code sets a 6-digit code expiring in 15 minutes" do
+    freeze_time do
+      device = Device.new
+      device.issue_pairing_code
+      assert_match(/\A[1-9]\d{5}\z/, device.pairing_code)
+      assert_equal 15.minutes.from_now, device.pairing_code_expires_at
+    end
+  end
 end
