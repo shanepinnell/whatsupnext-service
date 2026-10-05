@@ -26,6 +26,12 @@ class DevicesController < ApplicationController
     end
   end
 
+  # DELETE /devices/1
+  def destroy
+    Device.find(params.expect(:id)).destroy!
+    redirect_to devices_path, notice: "Device deleted.", status: :see_other
+  end
+
   private
     def set_rooms
       @rooms = Room.includes(floor: { building: :site }).sort_by(&:path_label)

@@ -8,7 +8,7 @@ Rails.application.routes.draw do
       end
     end
   end
-  resources :devices, only: %i[ index show edit update ]
+  resources :devices, except: %i[ new create ]
 
   root "organizations#show"
   resource :organization, only: [ :create, :edit, :update ]

@@ -53,4 +53,15 @@ class DevicesControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal "Lobby", device.reload.name
   end
+
+  test "should delete a device" do
+    device = Device.create!(device_identifier: SecureRandom.uuid, status: :paired, room: rooms(:summit), paired_at: 1.day.ago)
+
+    assert_difference("Device.count", -1) do
+      delete device_url(device)
+    end
+
+    assert_redirected_to devices_url
+    assert_equal "Device deleted.", flash[:notice]
+  end
 end

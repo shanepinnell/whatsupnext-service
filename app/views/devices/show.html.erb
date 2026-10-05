@@ -23,6 +23,9 @@
         <%= link_to edit_device_path(@device), class: "flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" do %>
           <%= icon "pencil", class: "h-4 w-4" %> Edit
         <% end %>
+        <%= button_to @device, method: :delete, class: "w-full flex items-center gap-2 text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 bg-transparent border-0 cursor-pointer", data: { turbo_confirm: "Delete this device? The TV will return to its pairing screen." } do %>
+          <%= icon "trash", class: "h-4 w-4" %> Delete
+        <% end %>
       </div>
     </div>
   </div>
