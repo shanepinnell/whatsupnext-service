@@ -64,4 +64,20 @@ class DevicesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to devices_url
     assert_equal "Device deleted.", flash[:notice]
   end
+
+  test "should get edit with room picker choices" do
+    device = Device.create!(device_identifier: SecureRandom.uuid, status: :paired, room: rooms(:summit), paired_at: 1.day.ago)
+
+    get edit_device_url(device, site_id: sites(:midtown).id, building_id: buildings(:tower_one).id, floor_id: "")
+    assert_response :success
+  end
+
+  test "re-renders edit when the room is cleared" do
+    device = Device.create!(device_identifier: SecureRandom.uuid, status: :paired, room: rooms(:summit), paired_at: 1.day.ago)
+
+    patch device_url(device), params: { device: { room_id: "" } }
+
+    assert_response :unprocessable_entity
+    assert_equal rooms(:summit), device.reload.room
+  end
 end
