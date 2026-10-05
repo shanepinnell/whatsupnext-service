@@ -9,6 +9,9 @@ class DeviceClaimsController < ApplicationController
   def create
     Device.claim!(code: params[:code].to_s.strip, room: @room)
     redirect_to [ @site, @building, @floor, @room ], notice: "Device paired."
+  rescue Device::InvalidPairingCode
+    flash.now[:alert] = "That code isn't valid or has expired. Check the code on the TV and try again."
+    render :new, status: :unprocessable_entity
   end
 
   private
