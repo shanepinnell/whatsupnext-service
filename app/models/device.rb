@@ -1,7 +1,7 @@
 require "digest"
 
 class Device < ApplicationRecord
-  enum :status, { pending: 0, paired: 1, revoked: 2 }
+  enum :status, { pending: 0, paired: 1 }
 
   PAIRING_CODE_TTL = 15.minutes
   DEFAULT_NAME = "Apple TV"
@@ -10,7 +10,7 @@ class Device < ApplicationRecord
 
   belongs_to :room, optional: true
 
-  scope :listed, -> { where.not(status: :pending).order(:name) }
+  scope :listed, -> { paired.order(:name) }
 
   attr_reader :api_key
 

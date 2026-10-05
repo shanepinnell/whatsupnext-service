@@ -141,13 +141,11 @@ class DeviceTest < ActiveSupport::TestCase
     end
   end
 
-  test "claim! raises InvalidPairingCode for a code held by a paired or revoked device" do
+  test "claim! raises InvalidPairingCode for a code held by a paired device" do
     room = persisted_room
     Device.create!(status: :paired, room: room, pairing_code: "111111", pairing_code_expires_at: 10.minutes.from_now)
-    Device.create!(status: :revoked, pairing_code: "222222", pairing_code_expires_at: 10.minutes.from_now)
 
     assert_raises(Device::InvalidPairingCode) { Device.claim!(code: "111111", room: room) }
-    assert_raises(Device::InvalidPairingCode) { Device.claim!(code: "222222", room: room) }
   end
 
   test "claim! raises InvalidPairingCode and pairs nothing when two pending devices hold the code" do
@@ -160,17 +158,19 @@ class DeviceTest < ActiveSupport::TestCase
   end
 
   test "listed excludes pending devices" do
+    room = persisted_room
     Device.create!(device_identifier: SecureRandom.uuid)
-    paired_device = Device.create!(device_identifier: SecureRandom.uuid, status: :paired, room: persisted_room)
-    revoked_device = Device.create!(device_identifier: SecureRandom.uuid, status: :revoked)
+    first_paired = Device.create!(device_identifier: SecureRandom.uuid, status: :paired, room: room)
+    second_paired = Device.create!(device_identifier: SecureRandom.uuid, status: :paired, room: room)
 
-    assert_equal [ paired_device, revoked_device ].sort, Device.listed.sort
+    assert_equal [ first_paired, second_paired ].sort, Device.listed.sort
   end
 
   test "listed sorts by name" do
-    lobby = Device.create!(status: :revoked, name: "Lobby")
-    annex = Device.create!(status: :revoked, name: "Annex")
-    default = Device.create!(status: :revoked)
+    room = persisted_room
+    lobby = Device.create!(status: :paired, room: room, name: "Lobby")
+    annex = Device.create!(status: :paired, room: room, name: "Annex")
+    default = Device.create!(status: :paired, room: room)
 
     assert_equal [ annex, default, lobby ], Device.listed.to_a
   end
@@ -183,5 +183,9 @@ class DeviceTest < ActiveSupport::TestCase
     device = Device.new(name: " ")
     assert_not device.valid?
     assert_includes device.errors[:name], "can't be blank"
+  end
+
+  test "status is either pending or paired" do
+    assert_equal %w[ pending paired ], Device.statuses.keys
   end
 end

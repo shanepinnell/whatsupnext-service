@@ -6,11 +6,7 @@ class Api::V1::Devices::PairingCodesController < Api::V1::BaseController
     return render json: { error: "missing_device_identifier" }, status: :bad_request if identifier.blank?
 
     device = Device.find_or_initialize_by(device_identifier: identifier)
-    if device.paired?
-      return render json: { error: "device_paired" }, status: :conflict
-    elsif device.revoked?
-      return render json: { error: "device_revoked" }, status: :conflict
-    end
+    return render json: { error: "device_paired" }, status: :conflict if device.paired?
 
     device.name = params[:name].presence || Device::DEFAULT_NAME if params.key?(:name)
     device.issue_pairing_code
