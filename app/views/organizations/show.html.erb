@@ -23,6 +23,12 @@
       <% end %>
     </ul>
     <p class="text-gray-500 mt-4"><% if @organization.sites.none? %>No sites yet.<% end %></p>
+
+    <h2 class="font-bold text-2xl mt-8 pl-4">
+      <%= link_to devices_path, class: "flex items-center gap-3 hover:underline" do %>
+        <%= icon "tv", class: "h-8 w-8" %> Devices
+      <% end %>
+    </h2>
   </div>
 <% else %>
   <div>

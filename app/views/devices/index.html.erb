@@ -1,1 +1,20 @@
-<h1 class="font-bold text-4xl">Devices</h1>
+<% content_for :title, "Devices" %>
+
+<div class="md:w-2/3 w-full">
+  <h1 class="font-bold text-4xl flex items-center gap-3">
+    <%= icon "tv", class: "h-9 w-9" %> Devices
+  </h1>
+
+  <% if @devices.any? %>
+    <ul class="mt-6 pl-4 space-y-3">
+      <% @devices.each do |device| %>
+        <li class="flex items-center gap-3">
+          <%= link_to device, class: "flex items-center gap-2 text-gray-700 underline hover:no-underline" do %>
+            <%= icon "tv", class: "h-4 w-4" %> <%= device.name %>
+          <% end %>
+          <span class="text-sm text-gray-500"><%= device.status.humanize %> · <%= device.room&.name || "Unassigned" %></span>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>
