@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       end
     end
   end
+  resources :devices, only: :show
 
   root "organizations#show"
   resource :organization, only: [ :create, :edit, :update ]

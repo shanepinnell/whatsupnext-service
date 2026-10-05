@@ -31,8 +31,10 @@
   <% if @room.devices.paired.any? %>
     <ul class="mt-4 pl-4 space-y-2">
       <% @room.devices.paired.order(:paired_at).each do |device| %>
-        <li class="flex items-center gap-2 text-gray-700">
-          <%= icon "tv", class: "h-4 w-4" %> Apple TV, paired <%= time_ago_in_words(device.paired_at) %> ago
+        <li>
+          <%= link_to device, class: "flex items-center gap-2 text-gray-700 underline hover:no-underline" do %>
+            <%= icon "tv", class: "h-4 w-4" %> Apple TV, paired <%= time_ago_in_words(device.paired_at) %> ago
+          <% end %>
         </li>
       <% end %>
     </ul>

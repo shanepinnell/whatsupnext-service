@@ -1,0 +1,40 @@
+<% content_for :title, "Device" %>
+
+<div class="md:w-2/3 w-full">
+  <% if (room = @device.room) %>
+    <% floor = room.floor %>
+    <% building = floor.building %>
+    <% site = building.site %>
+    <%= render "shared/breadcrumbs", crumbs: [[site.name, site_path(site)], [building.name, site_building_path(site, building)], [floor.name, site_building_floor_path(site, building, floor)], ["Rooms", site_building_floor_rooms_path(site, building, floor)], [room.name, site_building_floor_room_path(site, building, floor, room)]] %>
+  <% end %>
+
+  <h1 class="font-bold text-4xl flex items-center gap-3">
+    <%= icon "tv", class: "h-9 w-9" %>
+    Apple TV
+  </h1>
+
+  <dl class="my-5 space-y-5">
+    <div>
+      <dt class="font-medium mb-1">Status</dt>
+      <dd class="text-gray-700"><%= @device.status.humanize %></dd>
+    </div>
+    <div>
+      <dt class="font-medium mb-1">Room</dt>
+      <dd class="text-gray-700">
+        <% if room %>
+          <%= link_to room.name, site_building_floor_room_path(site, building, floor, room), class: "underline hover:no-underline" %>
+        <% else %>
+          Unassigned
+        <% end %>
+      </dd>
+    </div>
+    <div>
+      <dt class="font-medium mb-1">Paired</dt>
+      <dd class="text-gray-700"><%= @device.paired_at ? "#{time_ago_in_words(@device.paired_at)} ago" : "Not yet" %></dd>
+    </div>
+    <div>
+      <dt class="font-medium mb-1">Last seen</dt>
+      <dd class="text-gray-700"><%= @device.last_seen_at ? "#{time_ago_in_words(@device.last_seen_at)} ago" : "Never" %></dd>
+    </div>
+  </dl>
+</div>
