@@ -39,4 +39,8 @@ class RoomTest < ActiveSupport::TestCase
   test "has_one_attached background_image" do
     assert_respond_to Room.new, :background_image
   end
+
+  test "path_label joins site, building, floor, and room names" do
+    assert_equal "Downtown Campus → Tower 1 → Penthouse → Summit", rooms(:summit).path_label
+  end
 end

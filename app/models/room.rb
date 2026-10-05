@@ -5,4 +5,8 @@ class Room < ApplicationRecord
   has_many :devices, dependent: :restrict_with_error
 
   validates :name, presence: true, uniqueness: { scope: :floor_id }
+
+  def path_label
+    [ floor.building.site.name, floor.building.name, floor.name, name ].join(" → ")
+  end
 end

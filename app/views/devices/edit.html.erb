@@ -1,1 +1,22 @@
-<h1 class="font-bold text-4xl">Edit device</h1>
+<% content_for :title, "Editing #{@device.name}" %>
+
+<div class="md:w-2/3 w-full">
+  <h1 class="font-bold text-4xl flex items-center gap-3">
+    <%= icon "tv", class: "h-9 w-9" %> <%= @device.name %>
+  </h1>
+
+  <%= form_with(model: @device, class: "contents") do |form| %>
+    <%= render "shared/form_errors", record: @device %>
+
+    <div class="my-5">
+      <%= form.label :room_id, "Room" %>
+      <%= form.collection_select :room_id, @rooms, :id, :path_label, {}, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": @device.errors[:room].none?, "border-red-400 focus:outline-red-600": @device.errors[:room].any?}] %>
+    </div>
+
+    <div class="inline">
+      <%= form.submit "Save", class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+    </div>
+  <% end %>
+
+  <%= link_to "Back to device", @device, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+</div>

@@ -1,4 +1,6 @@
 class DevicesController < ApplicationController
+  before_action :set_rooms, only: %i[ edit update ]
+
   # GET /devices
   def index
     @devices = Device.listed
@@ -23,4 +25,9 @@ class DevicesController < ApplicationController
       render :edit, status: :unprocessable_entity
     end
   end
+
+  private
+    def set_rooms
+      @rooms = Room.includes(floor: { building: :site }).sort_by(&:path_label)
+    end
 end
