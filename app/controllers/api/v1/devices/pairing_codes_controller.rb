@@ -2,7 +2,10 @@ class Api::V1::Devices::PairingCodesController < Api::V1::BaseController
   POLL_INTERVAL_SECONDS = 5
 
   def create
-    device = Device.find_or_initialize_by(device_identifier: request.headers["X-Device-Identifier"])
+    identifier = request.headers["X-Device-Identifier"]
+    return render json: { error: "missing_device_identifier" }, status: :bad_request if identifier.blank?
+
+    device = Device.find_or_initialize_by(device_identifier: identifier)
     if device.paired?
       return render json: { error: "device_paired" }, status: :conflict
     elsif device.revoked?
