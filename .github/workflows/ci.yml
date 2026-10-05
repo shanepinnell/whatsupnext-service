@@ -5,6 +5,18 @@ on:
   push:
     branches: [ main ]
 
+# Throwaway, test-only values. Real secrets come from dotenvx locally and
+# Kamal secrets in production; CI only needs the app to boot, against a
+# test database it creates and discards. Kept inline (not Actions secrets)
+# so Dependabot PRs, which can't read repository secrets, also pass.
+env:
+  ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: ci-only-primary-key-not-a-secret
+  ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: ci-only-deterministic-key-not-a-secret
+  ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: ci-only-key-derivation-salt-not-a-secret
+  OIDC_ISSUER: https://oidc.example.test
+  OIDC_CLIENT_ID: ci-client
+  OIDC_CLIENT_SECRET: ci-client-secret-not-a-secret
+
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
