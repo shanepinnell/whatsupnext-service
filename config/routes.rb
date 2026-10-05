@@ -2,7 +2,9 @@ Rails.application.routes.draw do
   resources :sites do
     resources :buildings do
       resources :floors do
-        resources :rooms
+        resources :rooms do
+          resource :device_claim, only: %i[ new create ]
+        end
       end
     end
   end
