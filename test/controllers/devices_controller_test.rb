@@ -5,6 +5,11 @@ class DevicesControllerTest < ActionDispatch::IntegrationTest
     sign_in_as users(:one)
   end
 
+  test "should get index" do
+    get devices_url
+    assert_response :success
+  end
+
   test "should show a paired device with a room" do
     device = Device.create!(device_identifier: SecureRandom.uuid, status: :paired, room: rooms(:summit), paired_at: 1.day.ago)
 
