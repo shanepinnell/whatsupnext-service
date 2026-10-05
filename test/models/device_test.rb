@@ -132,4 +132,30 @@ class DeviceTest < ActiveSupport::TestCase
       Device.claim!(code: "999999", room: persisted_room)
     end
   end
+
+  test "claim! raises InvalidPairingCode for an expired code" do
+    Device.create!(pairing_code: "123456", pairing_code_expires_at: 1.minute.ago)
+
+    assert_raises(Device::InvalidPairingCode) do
+      Device.claim!(code: "123456", room: persisted_room)
+    end
+  end
+
+  test "claim! raises InvalidPairingCode for a code held by a paired or revoked device" do
+    room = persisted_room
+    Device.create!(status: :paired, room: room, pairing_code: "111111", pairing_code_expires_at: 10.minutes.from_now)
+    Device.create!(status: :revoked, pairing_code: "222222", pairing_code_expires_at: 10.minutes.from_now)
+
+    assert_raises(Device::InvalidPairingCode) { Device.claim!(code: "111111", room: room) }
+    assert_raises(Device::InvalidPairingCode) { Device.claim!(code: "222222", room: room) }
+  end
+
+  test "claim! raises InvalidPairingCode and pairs nothing when two pending devices hold the code" do
+    2.times { Device.create!(pairing_code: "123456", pairing_code_expires_at: 10.minutes.from_now) }
+
+    assert_raises(Device::InvalidPairingCode) do
+      Device.claim!(code: "123456", room: persisted_room)
+    end
+    assert_equal 0, Device.paired.count
+  end
 end

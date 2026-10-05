@@ -37,7 +37,7 @@ class Device < ApplicationRecord
     device = pending.where(pairing_code: code).where("pairing_code_expires_at > ?", Time.current).sole
     device.update!(status: :paired, room: room, paired_at: Time.current, pairing_code: nil, pairing_code_expires_at: nil)
     device
-  rescue ActiveRecord::RecordNotFound
+  rescue ActiveRecord::RecordNotFound, ActiveRecord::SoleRecordExceeded
     raise InvalidPairingCode
   end
 end
