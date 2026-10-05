@@ -28,4 +28,24 @@ class Api::V1::Devices::PairingCodesControllerTest < ActionDispatch::Integration
     assert_equal device.reload.pairing_code, response.parsed_body["code"]
     assert_operator device.pairing_code_expires_at, :>, 14.minutes.from_now
   end
+
+  test "refuses a code for a paired device_identifier" do
+    device = Device.create!(device_identifier: SecureRandom.uuid, status: :paired, room: rooms(:summit), api_key: "existing-key")
+
+    post api_v1_devices_pairing_codes_url, headers: { "X-Device-Identifier" => device.device_identifier }, as: :json
+
+    assert_response :conflict
+    assert_equal "device_paired", response.parsed_body["error"]
+    assert_nil device.reload.pairing_code
+  end
+
+  test "refuses a code for a revoked device_identifier" do
+    device = Device.create!(device_identifier: SecureRandom.uuid, status: :revoked)
+
+    post api_v1_devices_pairing_codes_url, headers: { "X-Device-Identifier" => device.device_identifier }, as: :json
+
+    assert_response :conflict
+    assert_equal "device_revoked", response.parsed_body["error"]
+    assert_nil device.reload.pairing_code
+  end
 end
