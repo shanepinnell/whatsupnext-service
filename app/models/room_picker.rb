@@ -17,6 +17,6 @@ class RoomPicker
   private
     def pick(options, id, default)
       chosen = options.find_by(id: id) if id.present?
-      chosen || (default if default && options.include?(default)) || (options.first if options.one?)
+      chosen || (default if default && options.include?(default))
     end
 end

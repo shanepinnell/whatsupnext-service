@@ -1,21 +1,39 @@
 <% content_for :title, "Editing #{@device.name}" %>
+<% select_class = "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full disabled:bg-gray-100 disabled:text-gray-400" %>
 
 <div class="md:w-2/3 w-full">
   <h1 class="font-bold text-4xl flex items-center gap-3">
     <%= icon "tv", class: "h-9 w-9" %> <%= @device.name %>
   </h1>
 
-  <%= form_with(model: @device, class: "contents") do |form| %>
-    <%= render "shared/form_errors", record: @device %>
+  <%= turbo_frame_tag "room_picker" do %>
+    <%= form_with url: edit_device_path(@device), method: :get, data: { controller: "auto-submit", action: "change->auto-submit#submit" } do %>
+      <div class="my-5">
+        <%= label_tag :site_id, "Site" %>
+        <%= select_tag :site_id, options_from_collection_for_select(@room_picker.sites, :id, :name, @room_picker.site&.id), include_blank: "Select a site", class: select_class %>
+      </div>
+      <div class="my-5">
+        <%= label_tag :building_id, "Building" %>
+        <%= select_tag :building_id, options_from_collection_for_select(@room_picker.buildings, :id, :name, @room_picker.building&.id), include_blank: "Select a building", disabled: @room_picker.site.nil?, class: select_class %>
+      </div>
+      <div class="my-5">
+        <%= label_tag :floor_id, "Floor" %>
+        <%= select_tag :floor_id, options_from_collection_for_select(@room_picker.floors, :id, :name, @room_picker.floor&.id), include_blank: "Select a floor", disabled: @room_picker.building.nil?, class: select_class %>
+      </div>
+    <% end %>
 
-    <div class="my-5">
-      <%= form.label :room_id, "Room" %>
-      <%= form.collection_select :room_id, @room_picker.rooms, :id, :name, {}, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": @device.errors[:room].none?, "border-red-400 focus:outline-red-600": @device.errors[:room].any?}] %>
-    </div>
+    <%= form_with model: @device, data: { turbo_frame: "_top" } do |form| %>
+      <%= render "shared/form_errors", record: @device %>
 
-    <div class="inline">
-      <%= form.submit "Save", class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
-    </div>
+      <div class="my-5">
+        <%= form.label :room_id, "Room" %>
+        <%= form.collection_select :room_id, @room_picker.rooms, :id, :name, { include_blank: "Select a room", selected: @room_picker.room&.id }, class: select_class %>
+      </div>
+
+      <div class="inline">
+        <%= form.submit "Save", class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+      </div>
+    <% end %>
   <% end %>
 
   <%= link_to "Back to device", @device, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>

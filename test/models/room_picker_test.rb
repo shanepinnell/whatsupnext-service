@@ -8,14 +8,14 @@ class RoomPickerTest < ActiveSupport::TestCase
       [ picker.site, picker.building, picker.floor, picker.room ]
   end
 
-  test "auto-selects each level that has only one option" do
+  test "does not auto-select a level that has only one option" do
     picker = RoomPicker.new(room: nil, site_id: sites(:downtown).id, building_id: buildings(:tower_one).id)
 
-    assert_equal floors(:penthouse), picker.floor
-    assert_equal rooms(:summit), picker.room
+    assert_nil picker.floor
+    assert_nil picker.room
   end
 
-  test "leaves a level empty when it has several options and none is chosen" do
+  test "leaves a level empty when none is chosen" do
     picker = RoomPicker.new(room: rooms(:summit), site_id: sites(:downtown).id, building_id: "")
 
     assert_nil picker.building
@@ -31,7 +31,7 @@ class RoomPickerTest < ActiveSupport::TestCase
   end
 
   test "leaves room empty when the chosen floor has no rooms" do
-    picker = RoomPicker.new(room: rooms(:summit), site_id: sites(:downtown).id, building_id: buildings(:tower_two).id)
+    picker = RoomPicker.new(room: rooms(:summit), site_id: sites(:downtown).id, building_id: buildings(:tower_two).id, floor_id: floors(:mezzanine).id)
 
     assert_equal floors(:mezzanine), picker.floor
     assert_nil picker.room
