@@ -79,7 +79,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_21_044510) do
     t.string "device_identifier"
     t.datetime "last_seen_at"
     t.string "mdm_device_id"
-    t.string "name"
+    t.string "name", default: "Apple TV", null: false
     t.datetime "paired_at"
     t.string "pairing_code"
     t.datetime "pairing_code_expires_at"

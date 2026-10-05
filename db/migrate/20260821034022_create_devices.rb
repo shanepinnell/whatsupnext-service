@@ -2,7 +2,7 @@ class CreateDevices < ActiveRecord::Migration[8.1]
   def change
     create_table :devices do |t|
       t.string :device_identifier
-      t.string :name
+      t.string :name, null: false, default: "Apple TV"
       t.references :room, foreign_key: true
       t.integer :status, null: false, default: 0
       t.string :api_key_digest
