@@ -16,9 +16,9 @@
     <%= form.text_field :name, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": building.errors[:name].none?, "border-red-400 focus:outline-red-600": building.errors[:name].any?}] %>
   </div>
 
-  <div class="my-5">
+  <div class="my-5" data-controller="timezone-select">
     <%= form.label :timezone %>
-    <%= form.text_field :timezone, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": building.errors[:timezone].none?, "border-red-400 focus:outline-red-600": building.errors[:timezone].any?}] %>
+    <%= form.select :timezone, TZInfo::Timezone.all_identifiers, { include_blank: "Select a timezone" }, { data: { "timezone-select-target": "select" }, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": building.errors[:timezone].none?, "border-red-400 focus:outline-red-600": building.errors[:timezone].any?}] } %>
   </div>
 
   <div class="inline">
