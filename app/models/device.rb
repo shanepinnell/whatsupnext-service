@@ -4,16 +4,20 @@ class Device < ApplicationRecord
   enum :status, { pending: 0, paired: 1, revoked: 2 }
 
   PAIRING_CODE_TTL = 15.minutes
+  DEFAULT_NAME = "Apple TV"
 
   class InvalidPairingCode < StandardError; end
 
   belongs_to :room, optional: true
+
+  scope :listed, -> { where.not(status: :pending).order(:name) }
 
   attr_reader :api_key
 
   validates :device_identifier, uniqueness: true, allow_nil: true
   validates :mdm_device_id, uniqueness: true, allow_nil: true
   validates :room, presence: true, if: :paired?
+  validates :name, presence: true
 
   def api_key=(plaintext)
     @api_key = plaintext

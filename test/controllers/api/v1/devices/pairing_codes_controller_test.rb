@@ -92,4 +92,13 @@ class Api::V1::Devices::PairingCodesControllerTest < ActionDispatch::Integration
 
     assert_equal "Lobby", device.reload.name
   end
+
+  test "uses the default name when the request sends a blank one" do
+    identifier = SecureRandom.uuid
+
+    post api_v1_devices_pairing_codes_url, params: { name: "  " }, headers: { "X-Device-Identifier" => identifier }, as: :json
+
+    assert_response :created
+    assert_equal "Apple TV", Device.find_by!(device_identifier: identifier).name
+  end
 end

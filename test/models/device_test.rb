@@ -158,4 +158,30 @@ class DeviceTest < ActiveSupport::TestCase
     end
     assert_equal 0, Device.paired.count
   end
+
+  test "listed excludes pending devices" do
+    Device.create!(device_identifier: SecureRandom.uuid)
+    paired_device = Device.create!(device_identifier: SecureRandom.uuid, status: :paired, room: persisted_room)
+    revoked_device = Device.create!(device_identifier: SecureRandom.uuid, status: :revoked)
+
+    assert_equal [ paired_device, revoked_device ].sort, Device.listed.sort
+  end
+
+  test "listed sorts by name" do
+    lobby = Device.create!(status: :revoked, name: "Lobby")
+    annex = Device.create!(status: :revoked, name: "Annex")
+    default = Device.create!(status: :revoked)
+
+    assert_equal [ annex, default, lobby ], Device.listed.to_a
+  end
+
+  test "defaults name to Apple TV" do
+    assert_equal "Apple TV", Device.new.name
+  end
+
+  test "invalid with a blank name" do
+    device = Device.new(name: " ")
+    assert_not device.valid?
+    assert_includes device.errors[:name], "can't be blank"
+  end
 end

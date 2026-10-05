@@ -12,7 +12,7 @@ class Api::V1::Devices::PairingCodesController < Api::V1::BaseController
       return render json: { error: "device_revoked" }, status: :conflict
     end
 
-    device.name = params[:name] if params.key?(:name)
+    device.name = params[:name].presence || Device::DEFAULT_NAME if params.key?(:name)
     device.issue_pairing_code
     device.save!
     render json: { code: device.pairing_code, expires_at: device.pairing_code_expires_at, poll_interval_seconds: POLL_INTERVAL_SECONDS }, status: :created

@@ -1,7 +1,7 @@
 class DevicesController < ApplicationController
   # GET /devices
   def index
-    @devices = Device.order(:created_at)
+    @devices = Device.listed
   end
 
   # GET /devices/1
