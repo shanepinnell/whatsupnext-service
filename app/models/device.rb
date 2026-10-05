@@ -5,6 +5,8 @@ class Device < ApplicationRecord
 
   PAIRING_CODE_TTL = 15.minutes
 
+  class InvalidPairingCode < StandardError; end
+
   belongs_to :room, optional: true
 
   attr_reader :api_key
@@ -35,5 +37,7 @@ class Device < ApplicationRecord
     device = pending.where(pairing_code: code).where("pairing_code_expires_at > ?", Time.current).sole
     device.update!(status: :paired, room: room, paired_at: Time.current, pairing_code: nil, pairing_code_expires_at: nil)
     device
+  rescue ActiveRecord::RecordNotFound
+    raise InvalidPairingCode
   end
 end

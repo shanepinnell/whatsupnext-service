@@ -126,4 +126,10 @@ class DeviceTest < ActiveSupport::TestCase
       assert_nil device.api_key_digest
     end
   end
+
+  test "claim! raises InvalidPairingCode for a code no device holds" do
+    assert_raises(Device::InvalidPairingCode) do
+      Device.claim!(code: "999999", room: persisted_room)
+    end
+  end
 end
