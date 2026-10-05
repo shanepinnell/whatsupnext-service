@@ -32,14 +32,8 @@ class DeviceTest < ActiveSupport::TestCase
     assert_includes device.errors[:room], "can't be blank"
   end
 
-  test "invalid when paired without an api_key" do
+  test "valid when paired with a room" do
     device = Device.new(status: :paired, room: persisted_room)
-    assert_not device.valid?
-    assert_includes device.errors[:api_key], "can't be blank"
-  end
-
-  test "valid when paired with a room and api_key" do
-    device = Device.new(status: :paired, room: persisted_room, api_key: "plaintext-token")
     assert device.valid?
   end
 
@@ -110,6 +104,26 @@ class DeviceTest < ActiveSupport::TestCase
       device = Device.new
       device.issue_pairing_code
       assert_equal "654321", device.pairing_code
+    end
+  end
+
+  test "claim! pairs the pending device holding an unexpired code to a room" do
+    room = persisted_room
+    device = Device.create!(device_identifier: SecureRandom.uuid)
+    device.issue_pairing_code
+    device.save!
+
+    freeze_time do
+      claimed = Device.claim!(code: device.pairing_code, room: room)
+
+      assert_equal device, claimed
+      device.reload
+      assert device.paired?
+      assert_equal room, device.room
+      assert_equal Time.current, device.paired_at
+      assert_nil device.pairing_code
+      assert_nil device.pairing_code_expires_at
+      assert_nil device.api_key_digest
     end
   end
 end

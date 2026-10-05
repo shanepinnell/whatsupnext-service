@@ -12,7 +12,6 @@ class Device < ApplicationRecord
   validates :device_identifier, uniqueness: true, allow_nil: true
   validates :mdm_device_id, uniqueness: true, allow_nil: true
   validates :room, presence: true, if: :paired?
-  validate :api_key_must_be_present_when_paired
 
   def api_key=(plaintext)
     @api_key = plaintext
@@ -32,9 +31,9 @@ class Device < ApplicationRecord
     self.pairing_code_expires_at = PAIRING_CODE_TTL.from_now
   end
 
-  private
-
-  def api_key_must_be_present_when_paired
-    errors.add(:api_key, :blank) if paired? && api_key_digest.blank?
+  def self.claim!(code:, room:)
+    device = pending.where(pairing_code: code).where("pairing_code_expires_at > ?", Time.current).sole
+    device.update!(status: :paired, room: room, paired_at: Time.current, pairing_code: nil, pairing_code_expires_at: nil)
+    device
   end
 end
