@@ -1,0 +1,20 @@
+<% if record.errors.any? %>
+  <div id="error_explanation" data-controller="flash" class="flex items-center justify-between gap-3 bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+    <div>
+      <% if record.errors.one? %>
+        <%= record.errors.first.full_message %>
+      <% else %>
+        <h2><%= pluralize(record.errors.count, "error") %> prohibited this <%= record.model_name.human.downcase %> from being saved:</h2>
+
+        <ul class="list-disc ml-6">
+          <% record.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </div>
+    <button type="button" data-action="flash#dismiss" class="shrink-0 inline-flex items-center justify-center rounded-md border border-red-300 p-1 text-red-400 hover:bg-red-100 hover:text-red-600 cursor-pointer" aria-label="Dismiss">
+      <%= icon "x-mark", variant: "micro", class: "size-4" %>
+    </button>
+  </div>
+<% end %>

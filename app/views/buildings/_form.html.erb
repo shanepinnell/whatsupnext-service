@@ -1,15 +1,5 @@
 <%= form_with(model: [ @site, building ], class: "contents") do |form| %>
-  <% if building.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-      <h2><%= pluralize(building.errors.count, "error") %> prohibited this building from being saved:</h2>
-
-      <ul class="list-disc ml-6">
-        <% building.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: building %>
 
   <div class="my-5">
     <%= form.label :name %>

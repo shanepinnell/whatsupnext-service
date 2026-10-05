@@ -30,6 +30,8 @@
     <p>This instance hasn't been set up yet. Give your organization a name to get started.</p>
 
     <%= form_with model: @organization, url: organization_path do |f| %>
+      <%= render "shared/form_errors", record: @organization %>
+
       <%= f.label :name %>
       <%= f.text_field :name %>
       <%= f.submit "Create organization" %>
