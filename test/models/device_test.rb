@@ -188,4 +188,10 @@ class DeviceTest < ActiveSupport::TestCase
   test "status is either pending or paired" do
     assert_equal %w[ pending paired ], Device.statuses.keys
   end
+
+  test "support_stage uses the default catalog and today's date" do
+    travel_to Date.new(2027, 3, 14) do
+      assert_equal :unsupported, Device.new(model_identifier: "AppleTV5,3").support_stage
+    end
+  end
 end

@@ -29,6 +29,10 @@ class Device < ApplicationRecord
     ActiveSupport::SecurityUtils.secure_compare(Digest::SHA256.hexdigest(plaintext.to_s), api_key_digest)
   end
 
+  def support_stage
+    SupportCatalog.default.stage_for(model_identifier, on: Date.current)
+  end
+
   def issue_pairing_code
     self.pairing_code = loop do
       code = SecureRandom.random_number(100_000..999_999).to_s

@@ -1,0 +1,19 @@
+# Apple TV hardware support catalog — see "Apple TV support policy" in SPEC.md.
+# Update with a Service release:
+# - after WWDC: add the next tvOS major with a blank release date, and set
+#   last_tvos on each model it drops
+# - after the September release: fill in that major's release date
+tvos_releases:
+  26: 2025-09-15
+  27: 2026-09-14
+models:
+  "AppleTV5,3":
+    name: Apple TV HD
+    last_tvos: 26
+  "AppleTV6,2":
+    name: Apple TV 4K (1st generation)
+    last_tvos: 26
+  "AppleTV11,1":
+    name: Apple TV 4K (2nd generation)
+  "AppleTV14,1":
+    name: Apple TV 4K (3rd generation)
