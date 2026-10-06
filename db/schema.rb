@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_06_061822) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_06_062721) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -87,6 +87,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_061822) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "model_identifier"
+    t.string "os_version"
+    t.string "app_version"
+    t.integer "display_width"
+    t.integer "display_height"
+    t.boolean "display_hdr"
+    t.integer "network"
+    t.datetime "info_reported_at"
     t.index ["device_identifier"], name: "index_devices_on_device_identifier", unique: true
     t.index ["mdm_device_id"], name: "index_devices_on_mdm_device_id", unique: true
     t.index ["room_id"], name: "index_devices_on_room_id"

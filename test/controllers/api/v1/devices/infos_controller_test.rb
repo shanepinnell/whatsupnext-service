@@ -54,6 +54,50 @@ class Api::V1::Devices::InfosControllerTest < ActionDispatch::IntegrationTest
     assert_equal "invalid_api_key", response.parsed_body["error"]
   end
 
+  test "records the reported tvOS and App versions" do
+    post api_v1_devices_info_url, params: { os_version: "27.0", app_version: "1.0 (42)" }, headers: auth_headers, as: :json
+
+    assert_response :no_content
+    @device.reload
+    assert_equal "27.0", @device.os_version
+    assert_equal "1.0 (42)", @device.app_version
+  end
+
+  test "records the reported display" do
+    post api_v1_devices_info_url, params: { display: { width: 3840, height: 2160, hdr: true } }, headers: auth_headers, as: :json
+
+    assert_response :no_content
+    @device.reload
+    assert_equal 3840, @device.display_width
+    assert_equal 2160, @device.display_height
+    assert @device.display_hdr
+  end
+
+  test "records the reported network" do
+    post api_v1_devices_info_url, params: { network: "ethernet" }, headers: auth_headers, as: :json
+
+    assert_response :no_content
+    assert_equal "ethernet", @device.reload.network
+  end
+
+  test "records when the device last reported its info" do
+    freeze_time do
+      post api_v1_devices_info_url, params: { os_version: "27.0" }, headers: auth_headers, as: :json
+
+      assert_equal Time.current, @device.reload.info_reported_at
+    end
+  end
+
+  test "rejects an unknown network and records nothing" do
+    post api_v1_devices_info_url, params: { os_version: "27.0", network: "carrier_pigeon" }, headers: auth_headers, as: :json
+
+    assert_response :unprocessable_content
+    assert_equal "invalid_device_info", response.parsed_body["error"]
+    @device.reload
+    assert_nil @device.os_version
+    assert_nil @device.network
+  end
+
   private
     def auth_headers
       { "Authorization" => "Bearer device-key" }

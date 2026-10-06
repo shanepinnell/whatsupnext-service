@@ -2,6 +2,7 @@ require "digest"
 
 class Device < ApplicationRecord
   enum :status, { pending: 0, paired: 1 }
+  enum :network, { ethernet: 0, wifi: 1, other: 2 }, prefix: true, validate: { allow_nil: true }
 
   PAIRING_CODE_TTL = 15.minutes
   DEFAULT_NAME = "Apple TV"

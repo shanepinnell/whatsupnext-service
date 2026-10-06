@@ -189,6 +189,10 @@ class DeviceTest < ActiveSupport::TestCase
     assert_equal %w[ pending paired ], Device.statuses.keys
   end
 
+  test "network is ethernet, wifi or other" do
+    assert_equal %w[ ethernet wifi other ], Device.networks.keys
+  end
+
   test "authenticated_by finds the device with that api key" do
     device = Device.create!(api_key: "device-key")
     assert_equal device, Device.authenticated_by("device-key")
