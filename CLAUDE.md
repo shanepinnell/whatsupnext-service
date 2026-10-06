@@ -13,6 +13,13 @@ this repository.
   hand. This includes routes: let a generator add its own route entry
   first, then hand-adjust nesting/shallow structure afterward, rather
   than hand-authoring `routes.rb` entries upfront.
+- **Migrations, pre-release**: generate a normal migration
+  (`bin/rails g migration ...`) for every schema change — don't edit
+  old ones. At MVP — before the first database exists outside
+  development (first SaaS deploy or first self-hosted install) —
+  consolidate everything in `db/migrate/` into one baseline migration
+  built from `db/schema.rb`. Never consolidate after that: deployed
+  databases record which migration versions they've run.
 - **Local secrets (Active Record encryption keys, etc.)**: never in
   `credentials.yml.enc` — this repo is public. Sourced from `ENV` in
   every environment; production gets them from Kamal secrets. For local
