@@ -52,7 +52,7 @@
   <% if @device.tvos_update_available? %>
     <div class="mt-5 flex gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">
       <%= icon "exclamation-triangle", class: "h-5 w-5 shrink-0" %>
-      <p>This Apple TV is on tvOS <%= @device.os_version %>. We recommend updating to keep getting security fixes.</p>
+      <p>This Apple TV is on tvOS <%= @device.os_version %>. We recommend updating.</p>
     </div>
   <% end %>
 
