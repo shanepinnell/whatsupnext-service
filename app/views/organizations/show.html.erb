@@ -1,12 +1,22 @@
 <% if @organization.persisted? %>
   <div>
-    <h1 class="font-bold text-4xl"><%= @organization.name %></h1>
+    <div class="flex items-center justify-between">
+      <h1 class="font-bold text-4xl"><%= @organization.name %></h1>
+      <div class="relative" data-controller="dropdown">
+        <button type="button" data-action="dropdown#toggle" class="w-8 h-8 rounded-full border border-gray-300 hover:bg-gray-100 flex items-center justify-center text-gray-500" aria-label="Organization actions">
+          <%= icon "ellipsis-vertical", class: "h-5 w-5" %>
+        </button>
+        <div data-dropdown-target="menu" class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+          <%= link_to edit_organization_path, class: "flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" do %>
+            <%= icon "pencil", class: "h-4 w-4" %> Edit
+          <% end %>
+        </div>
+      </div>
+    </div>
 
     <% if @organization.support_information.present? %>
       <%= @organization.support_information %>
     <% end %>
-
-    <%= link_to "Edit", edit_organization_path %>
 
     <h2 class="font-bold text-2xl mt-8 pl-4">
       <%= link_to sites_path, class: "flex items-center gap-3 hover:underline" do %>
