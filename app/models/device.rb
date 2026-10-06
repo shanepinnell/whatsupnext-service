@@ -34,8 +34,20 @@ class Device < ApplicationRecord
     find_by(api_key_digest: Digest::SHA256.hexdigest(api_key)) if api_key.present?
   end
 
+  def self.needing_support_attention
+    paired.reject { |device| device.support_stage == :supported }
+  end
+
   def support_stage
     SupportCatalog.default.stage_for(model_identifier, on: Date.current)
+  end
+
+  def hardware_name
+    SupportCatalog.default.name_for(model_identifier) || model_identifier
+  end
+
+  def support_ends_on
+    SupportCatalog.default.support_ends_on(model_identifier)
   end
 
   def issue_pairing_code

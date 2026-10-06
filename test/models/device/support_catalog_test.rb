@@ -52,6 +52,14 @@ class Device::SupportCatalogTest < ActiveSupport::TestCase
     assert_nil @catalog.support_ends_on("AppleTV14,1")
   end
 
+  test "name_for returns the model's marketing name" do
+    assert_equal "Apple TV HD", @catalog.name_for("AppleTV5,3")
+  end
+
+  test "name_for is nil for an unknown model" do
+    assert_nil @catalog.name_for("AppleTV99,1")
+  end
+
   test "the default catalog is loaded from config/apple_tv_support.yml" do
     assert_equal Date.new(2026, 9, 14), Device::SupportCatalog.default.support_ends_on("AppleTV5,3") - 6.months
   end

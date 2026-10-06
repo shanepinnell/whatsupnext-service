@@ -39,6 +39,12 @@
         <%= icon "tv", class: "h-8 w-8" %> Devices
       <% end %>
     </h2>
+    <% if (attention = Device.needing_support_attention).any? %>
+      <p class="mt-4 pl-8 flex items-center gap-2 text-amber-800">
+        <%= icon "exclamation-triangle", class: "h-4 w-4" %>
+        <%= link_to "#{pluralize(attention.size, "Apple TV")} losing or past support", devices_path, class: "underline hover:no-underline" %>
+      </p>
+    <% end %>
   </div>
 <% else %>
   <div>

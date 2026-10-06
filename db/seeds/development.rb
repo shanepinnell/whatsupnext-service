@@ -18,13 +18,18 @@ annex_floor.rooms.find_or_create_by!(name: "Everest")
 annex_floor.rooms.find_or_create_by!(name: "Huddle 2A")
 annex_floor.rooms.find_or_create_by!(name: "Huddle 2B")
 
-{ "Summit Left" => summit, "Summit Right" => summit, "Everest TV" => everest }.each do |name, room|
-  Device.find_or_create_by!(name: name) do |device|
+{
+  "Summit Left" => [ summit, { model_identifier: "AppleTV14,1", os_version: "27.0", display_width: 3840, display_height: 2160, display_hdr: true, network: :ethernet } ],
+  "Summit Right" => [ summit, { model_identifier: "AppleTV5,3", os_version: "26.6", display_width: 1920, display_height: 1080, display_hdr: false, network: :wifi } ],
+  "Everest TV" => [ everest, { model_identifier: "AppleTV11,1", os_version: "26.6", display_width: 3840, display_height: 2160, display_hdr: true, network: :wifi } ]
+}.each do |name, (room, info)|
+  device = Device.find_or_create_by!(name: name) do |device|
     device.device_identifier = SecureRandom.uuid
     device.status = :paired
     device.room = room
     device.paired_at = 3.days.ago
   end
+  device.update!(info.merge(app_version: "1.0 (1)", info_reported_at: 5.minutes.ago))
 end
 
 pending = Device.create!(device_identifier: SecureRandom.uuid, name: "New Apple TV")

@@ -203,6 +203,29 @@ class DeviceTest < ActiveSupport::TestCase
     assert_nil Device.authenticated_by("other-key")
   end
 
+  test "hardware_name is the catalog's marketing name" do
+    assert_equal "Apple TV HD", Device.new(model_identifier: "AppleTV5,3").hardware_name
+  end
+
+  test "hardware_name falls back to the model identifier for an unknown model" do
+    assert_equal "AppleTV99,1", Device.new(model_identifier: "AppleTV99,1").hardware_name
+  end
+
+  test "support_ends_on comes from the default catalog" do
+    assert_equal Date.new(2027, 3, 14), Device.new(model_identifier: "AppleTV5,3").support_ends_on
+  end
+
+  test "needing_support_attention lists paired devices that aren't supported" do
+    room = persisted_room
+    old = Device.create!(status: :paired, room: room, model_identifier: "AppleTV5,3")
+    Device.create!(status: :paired, room: room, model_identifier: "AppleTV14,1")
+    Device.create!(model_identifier: "AppleTV5,3")
+
+    travel_to Date.new(2026, 10, 5) do
+      assert_equal [ old ], Device.needing_support_attention
+    end
+  end
+
   test "support_stage uses the default catalog and today's date" do
     travel_to Date.new(2027, 3, 14) do
       assert_equal :unsupported, Device.new(model_identifier: "AppleTV5,3").support_stage

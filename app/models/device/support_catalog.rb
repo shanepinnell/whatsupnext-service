@@ -28,6 +28,10 @@ class Device::SupportCatalog
     released_on + DEPRECATION_PERIOD if released_on
   end
 
+  def name_for(model_identifier)
+    @models.dig(model_identifier, :name)
+  end
+
   private
     def dropping_major(model_identifier)
       last_tvos = @models.dig(model_identifier, :last_tvos)

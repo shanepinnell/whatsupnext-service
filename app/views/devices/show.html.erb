@@ -30,6 +30,24 @@
 </div>
 
 <div class="md:w-2/3 w-full">
+  <% case @device.support_stage %>
+  <% when :losing_support %>
+    <div class="mt-5 flex gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">
+      <%= icon "exclamation-triangle", class: "h-5 w-5 shrink-0" %>
+      <p>Apple's next tvOS release drops the <%= @device.hardware_name %>. Support for this Apple TV ends 6 months after that release.</p>
+    </div>
+  <% when :deprecated %>
+    <div class="mt-5 flex gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">
+      <%= icon "exclamation-triangle", class: "h-5 w-5 shrink-0" %>
+      <p>The <%= @device.hardware_name %> no longer gets tvOS updates. Support ends <%= l @device.support_ends_on, format: :long %> — after that, this Apple TV stops showing room information unless an admin accepts the risk.</p>
+    </div>
+  <% when :unsupported %>
+    <div class="mt-5 flex gap-3 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+      <%= icon "exclamation-circle", class: "h-5 w-5 shrink-0" %>
+      <p>The <%= @device.hardware_name %> no longer gets security updates. Support ended <%= l @device.support_ends_on, format: :long %>, and this Apple TV no longer shows room information.</p>
+    </div>
+  <% end %>
+
   <dl class="my-5 space-y-5">
     <div>
       <dt class="font-medium mb-1">Status</dt>
@@ -54,4 +72,23 @@
       <dd class="text-gray-700"><%= @device.last_seen_at ? "#{time_ago_in_words(@device.last_seen_at)} ago" : "Never" %></dd>
     </div>
   </dl>
+
+  <% if @device.info_reported_at %>
+    <h2 class="font-bold text-2xl mt-8 flex items-center gap-3">
+      <%= icon "cpu-chip", class: "h-7 w-7" %> Hardware &amp; software
+    </h2>
+    <dl class="my-5 space-y-5">
+      <% { "Model" => @device.hardware_name,
+           "tvOS" => @device.os_version,
+           "App version" => @device.app_version,
+           "Display" => (@device.display_width && "#{@device.display_width}×#{@device.display_height}#{" · HDR" if @device.display_hdr}"),
+           "Network" => { "ethernet" => "Ethernet", "wifi" => "Wi-Fi", "other" => "Other" }[@device.network],
+           "Last report" => "#{time_ago_in_words(@device.info_reported_at)} ago" }.compact.each do |label, value| %>
+        <div>
+          <dt class="font-medium mb-1"><%= label %></dt>
+          <dd class="text-gray-700"><%= value %></dd>
+        </div>
+      <% end %>
+    </dl>
+  <% end %>
 </div>

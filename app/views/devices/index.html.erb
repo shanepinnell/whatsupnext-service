@@ -13,6 +13,9 @@
             <%= icon "tv", class: "h-4 w-4" %> <%= device.name %>
           <% end %>
           <span class="text-sm text-gray-500"><%= device.status.humanize %> · <%= device.room&.name || "Unassigned" %></span>
+          <% unless (stage = device.support_stage) == :supported %>
+            <span class="rounded-full px-2 py-0.5 text-xs font-medium <%= stage == :unsupported ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800" %>"><%= stage.to_s.humanize %></span>
+          <% end %>
         </li>
       <% end %>
     </ul>
