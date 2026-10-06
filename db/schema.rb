@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_06_062721) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_06_064147) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -94,9 +94,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_062721) do
     t.boolean "display_hdr"
     t.integer "network"
     t.datetime "info_reported_at"
+    t.string "support_risk_accepted_stage"
+    t.datetime "support_risk_accepted_at"
+    t.integer "support_risk_accepted_by_id"
     t.index ["device_identifier"], name: "index_devices_on_device_identifier", unique: true
     t.index ["mdm_device_id"], name: "index_devices_on_mdm_device_id", unique: true
     t.index ["room_id"], name: "index_devices_on_room_id"
+    t.index ["support_risk_accepted_by_id"], name: "index_devices_on_support_risk_accepted_by_id"
   end
 
   create_table "floors", force: :cascade do |t|
@@ -155,6 +159,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_062721) do
   add_foreign_key "buildings", "sites"
   add_foreign_key "calendar_sources", "rooms"
   add_foreign_key "devices", "rooms"
+  add_foreign_key "devices", "users", column: "support_risk_accepted_by_id", on_delete: :nullify
   add_foreign_key "floors", "buildings"
   add_foreign_key "rooms", "floors"
   add_foreign_key "sessions", "users"

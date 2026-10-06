@@ -232,6 +232,56 @@ class DeviceTest < ActiveSupport::TestCase
     end
   end
 
+  test "accept_support_risk! records the current stage, time and admin" do
+    device = Device.create!(model_identifier: "AppleTV5,3")
+
+    travel_to Time.zone.local(2026, 10, 5, 12) do
+      device.accept_support_risk!(by: users(:one))
+
+      assert_equal "deprecated", device.support_risk_accepted_stage
+      assert_equal Time.current, device.support_risk_accepted_at
+      assert_equal users(:one), device.support_risk_accepted_by
+    end
+  end
+
+  test "support_risk_accepted? is true for the accepted stage" do
+    device = Device.create!(model_identifier: "AppleTV5,3")
+
+    travel_to Date.new(2026, 10, 5) do
+      device.accept_support_risk!(by: users(:one))
+      assert device.support_risk_accepted?
+    end
+  end
+
+  test "an earlier stage's acceptance doesn't cover a later stage" do
+    device = Device.create!(model_identifier: "AppleTV5,3")
+    travel_to(Date.new(2026, 10, 5)) { device.accept_support_risk!(by: users(:one)) }
+
+    travel_to Date.new(2027, 3, 14) do
+      assert_not device.support_risk_accepted?
+    end
+  end
+
+  test "support_risk_accepted? is false when nothing was accepted" do
+    travel_to Date.new(2026, 10, 5) do
+      assert_not Device.new(model_identifier: "AppleTV5,3").support_risk_accepted?
+    end
+  end
+
+  test "accepting the risk of a supported device is invalid" do
+    device = Device.create!(model_identifier: "AppleTV14,1")
+    assert_raises(ActiveRecord::RecordInvalid) { device.accept_support_risk!(by: users(:one)) }
+  end
+
+  test "needing_support_attention leaves out devices whose risk was accepted" do
+    device = Device.create!(status: :paired, room: persisted_room, model_identifier: "AppleTV5,3")
+
+    travel_to Date.new(2026, 10, 5) do
+      device.accept_support_risk!(by: users(:one))
+      assert_empty Device.needing_support_attention
+    end
+  end
+
   test "support_stage uses the default catalog and today's date" do
     travel_to Date.new(2027, 3, 14) do
       assert_equal :unsupported, Device.new(model_identifier: "AppleTV5,3").support_stage

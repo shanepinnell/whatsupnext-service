@@ -10,6 +10,7 @@ class Device < ApplicationRecord
   class InvalidPairingCode < StandardError; end
 
   belongs_to :room, optional: true
+  belongs_to :support_risk_accepted_by, class_name: "User", optional: true
 
   scope :listed, -> { paired.order(:name) }
 
@@ -19,6 +20,7 @@ class Device < ApplicationRecord
   validates :mdm_device_id, uniqueness: true, allow_nil: true
   validates :room, presence: true, if: :paired?
   validates :name, presence: true
+  validates :support_risk_accepted_stage, exclusion: { in: %w[ supported ] }
 
   def api_key=(plaintext)
     @api_key = plaintext
@@ -35,7 +37,7 @@ class Device < ApplicationRecord
   end
 
   def self.needing_support_attention
-    paired.reject { |device| device.support_stage == :supported }
+    paired.reject { |device| device.support_stage == :supported || device.support_risk_accepted? }
   end
 
   def support_stage
@@ -52,6 +54,14 @@ class Device < ApplicationRecord
 
   def tvos_update_available?
     SupportCatalog.default.tvos_update_available?(model_identifier, os_version, on: Date.current)
+  end
+
+  def accept_support_risk!(by:)
+    update!(support_risk_accepted_stage: support_stage, support_risk_accepted_at: Time.current, support_risk_accepted_by: by)
+  end
+
+  def support_risk_accepted?
+    support_risk_accepted_stage.present? && support_risk_accepted_stage == support_stage.to_s
   end
 
   def issue_pairing_code
