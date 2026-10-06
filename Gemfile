@@ -80,3 +80,5 @@ group :test do
   gem "selenium-webdriver"
   gem "minitest-mock"
 end
+
+gem "active_storage_validations", "~> 4.1"

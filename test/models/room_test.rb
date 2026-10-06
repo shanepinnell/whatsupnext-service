@@ -39,4 +39,40 @@ class RoomTest < ActiveSupport::TestCase
   test "has_one_attached background_image" do
     assert_respond_to Room.new, :background_image
   end
+
+  test "valid with a 1920x1080 background image" do
+    assert room_with_background("background_1920x1080.png").valid?
+  end
+
+  test "valid with a 3840x2160 background image" do
+    assert room_with_background("background_3840x2160.png").valid?
+  end
+
+  test "valid with a WebP background image" do
+    assert room_with_background("background_1920x1080.webp", content_type: "image/webp").valid?
+  end
+
+  test "invalid with a background image smaller than 1920x1080" do
+    assert_not room_with_background("background_1280x720.png").valid?
+  end
+
+  test "invalid with a background image larger than 3840x2160" do
+    assert_not room_with_background("background_7680x4320.png").valid?
+  end
+
+  test "invalid with a background image that isn't 16:9" do
+    assert_not room_with_background("background_2048x1536.png").valid?
+  end
+
+  test "invalid with a background image that isn't an image" do
+    assert_not room_with_background("not_an_image.txt", content_type: "text/plain").valid?
+  end
+
+  private
+    def room_with_background(filename, content_type: "image/png")
+      floor = Floor.create!(name: "1", building: buildings(:tower_one))
+      Room.new(name: "Everest", floor: floor).tap do |room|
+        room.background_image.attach(io: file_fixture(filename).open, filename: filename, content_type: content_type)
+      end
+    end
 end
