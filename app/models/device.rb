@@ -29,6 +29,10 @@ class Device < ApplicationRecord
     ActiveSupport::SecurityUtils.secure_compare(Digest::SHA256.hexdigest(plaintext.to_s), api_key_digest)
   end
 
+  def self.authenticated_by(api_key)
+    find_by(api_key_digest: Digest::SHA256.hexdigest(api_key)) if api_key.present?
+  end
+
   def support_stage
     SupportCatalog.default.stage_for(model_identifier, on: Date.current)
   end

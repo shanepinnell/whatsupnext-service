@@ -189,6 +189,16 @@ class DeviceTest < ActiveSupport::TestCase
     assert_equal %w[ pending paired ], Device.statuses.keys
   end
 
+  test "authenticated_by finds the device with that api key" do
+    device = Device.create!(api_key: "device-key")
+    assert_equal device, Device.authenticated_by("device-key")
+  end
+
+  test "authenticated_by returns nil for an unknown api key" do
+    Device.create!(api_key: "device-key")
+    assert_nil Device.authenticated_by("other-key")
+  end
+
   test "support_stage uses the default catalog and today's date" do
     travel_to Date.new(2027, 3, 14) do
       assert_equal :unsupported, Device.new(model_identifier: "AppleTV5,3").support_stage

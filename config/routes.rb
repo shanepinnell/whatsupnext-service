@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       namespace :devices do
+        resource :info, only: :create
         resources :pairing_codes, only: :create
       end
     end
