@@ -226,6 +226,12 @@ class DeviceTest < ActiveSupport::TestCase
     end
   end
 
+  test "tvos_update_available? uses the default catalog and today's date" do
+    travel_to Date.new(2026, 10, 5) do
+      assert Device.new(model_identifier: "AppleTV11,1", os_version: "26.6").tvos_update_available?
+    end
+  end
+
   test "support_stage uses the default catalog and today's date" do
     travel_to Date.new(2027, 3, 14) do
       assert_equal :unsupported, Device.new(model_identifier: "AppleTV5,3").support_stage

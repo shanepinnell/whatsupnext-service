@@ -50,6 +50,10 @@ class Device < ApplicationRecord
     SupportCatalog.default.support_ends_on(model_identifier)
   end
 
+  def tvos_update_available?
+    SupportCatalog.default.tvos_update_available?(model_identifier, os_version, on: Date.current)
+  end
+
   def issue_pairing_code
     self.pairing_code = loop do
       code = SecureRandom.random_number(100_000..999_999).to_s

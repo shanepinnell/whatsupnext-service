@@ -60,6 +60,30 @@ class Device::SupportCatalogTest < ActiveSupport::TestCase
     assert_nil @catalog.name_for("AppleTV99,1")
   end
 
+  test "a model on an old tvOS that can run the current one has an update available" do
+    assert @catalog.tvos_update_available?("AppleTV14,1", "26.6", on: Date.new(2026, 10, 5))
+  end
+
+  test "a model on the current tvOS has no update available" do
+    assert_not @catalog.tvos_update_available?("AppleTV14,1", "27.0", on: Date.new(2026, 10, 5))
+  end
+
+  test "a model losing support can still update to the current tvOS" do
+    assert @catalog.tvos_update_available?("AppleTV11,1", "26.6", on: Date.new(2026, 10, 5))
+  end
+
+  test "a model that can't run the current tvOS has no update available" do
+    assert_not @catalog.tvos_update_available?("AppleTV5,3", "26.6", on: Date.new(2026, 10, 5))
+  end
+
+  test "no update is available before the new tvOS is released" do
+    assert_not @catalog.tvos_update_available?("AppleTV14,1", "26.6", on: Date.new(2026, 9, 13))
+  end
+
+  test "no update is available when the tvOS version hasn't been reported" do
+    assert_not @catalog.tvos_update_available?("AppleTV14,1", nil, on: Date.new(2026, 10, 5))
+  end
+
   test "the default catalog is loaded from config/apple_tv_support.yml" do
     assert_equal Date.new(2026, 9, 14), Device::SupportCatalog.default.support_ends_on("AppleTV5,3") - 6.months
   end

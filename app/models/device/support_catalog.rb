@@ -32,7 +32,19 @@ class Device::SupportCatalog
     @models.dig(model_identifier, :name)
   end
 
+  def tvos_update_available?(model_identifier, os_version, on:)
+    current = current_tvos(on: on)
+    return false if os_version.blank? || current.nil?
+
+    last_tvos = @models.dig(model_identifier, :last_tvos)
+    os_version.to_i < current && (last_tvos.nil? || last_tvos >= current)
+  end
+
   private
+    def current_tvos(on:)
+      @tvos_releases.select { |_major, released_on| released_on && released_on <= on }.keys.max
+    end
+
     def dropping_major(model_identifier)
       last_tvos = @models.dig(model_identifier, :last_tvos)
       last_tvos + 1 if last_tvos && @tvos_releases.key?(last_tvos + 1)

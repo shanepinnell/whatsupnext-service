@@ -47,6 +47,12 @@
       <p>The <%= @device.hardware_name %> no longer gets security updates. Support ended <%= l @device.support_ends_on, format: :long %>, and this Apple TV no longer shows room information.</p>
     </div>
   <% end %>
+  <% if @device.tvos_update_available? %>
+    <div class="mt-5 flex gap-3 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-blue-800">
+      <%= icon "arrow-path", class: "h-5 w-5 shrink-0" %>
+      <p>This Apple TV is on tvOS <%= @device.os_version %>. Update it in Settings → System → Software Updates to keep getting security fixes.</p>
+    </div>
+  <% end %>
 
   <dl class="my-5 space-y-5">
     <div>
