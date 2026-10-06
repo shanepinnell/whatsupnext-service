@@ -193,6 +193,36 @@ class DeviceTest < ActiveSupport::TestCase
     assert_equal %w[ ethernet wifi other ], Device.networks.keys
   end
 
+  test "deliver_api_key! returns a key that authenticates the paired device" do
+    device = Device.create!(status: :paired, room: persisted_room)
+
+    key = device.deliver_api_key!
+
+    assert key.present?
+    assert_equal device, Device.authenticated_by(key)
+  end
+
+  test "deliver_api_key! returns nil once the key has been delivered" do
+    device = Device.create!(status: :paired, room: persisted_room)
+    device.deliver_api_key!
+
+    assert_nil device.deliver_api_key!
+  end
+
+  test "deliver_api_key! delivers once even when two copies of the device race" do
+    device = Device.create!(status: :paired, room: persisted_room)
+    racing_copy = Device.find(device.id)
+
+    key = device.deliver_api_key!
+
+    assert_nil racing_copy.deliver_api_key!
+    assert_equal device, Device.authenticated_by(key)
+  end
+
+  test "deliver_api_key! returns nil for a pending device" do
+    assert_nil Device.create!.deliver_api_key!
+  end
+
   test "authenticated_by finds the device with that api key" do
     device = Device.create!(api_key: "device-key")
     assert_equal device, Device.authenticated_by("device-key")

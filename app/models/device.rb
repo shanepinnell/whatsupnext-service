@@ -32,6 +32,17 @@ class Device < ApplicationRecord
     ActiveSupport::SecurityUtils.secure_compare(Digest::SHA256.hexdigest(plaintext.to_s), api_key_digest)
   end
 
+  def deliver_api_key!
+    return unless paired? && api_key_digest.nil?
+
+    key = SecureRandom.base58(32)
+    delivered = Device.where(id: id, api_key_digest: nil).update_all(api_key_digest: Digest::SHA256.hexdigest(key), updated_at: Time.current)
+    return unless delivered == 1
+
+    reload
+    key
+  end
+
   def self.authenticated_by(api_key)
     find_by(api_key_digest: Digest::SHA256.hexdigest(api_key)) if api_key.present?
   end
