@@ -91,4 +91,36 @@ class Api::V1::Devices::PairingCodesControllerTest < ActionDispatch::Integration
     assert_response :created
     assert_equal "Apple TV", Device.find_by!(device_identifier: identifier).name
   end
+
+  test "records device info sent with the code request" do
+    identifier = SecureRandom.uuid
+
+    post api_v1_devices_pairing_codes_url, params: { model_identifier: "AppleTV5,3", os_version: "26.6", app_version: "1.0 (1)", display: { width: 1920, height: 1080, hdr: false }, network: "wifi" }, headers: { "X-Device-Identifier" => identifier }, as: :json
+
+    assert_response :created
+    device = Device.find_by!(device_identifier: identifier)
+    assert_equal "AppleTV5,3", device.model_identifier
+    assert_equal "26.6", device.os_version
+    assert_equal "1.0 (1)", device.app_version
+    assert_equal 1920, device.display_width
+    assert_equal "wifi", device.network
+    assert_not_nil device.info_reported_at
+  end
+
+  test "rejects an unknown network without issuing a code" do
+    assert_no_difference "Device.count" do
+      post api_v1_devices_pairing_codes_url, params: { network: "carrier_pigeon" }, headers: { "X-Device-Identifier" => SecureRandom.uuid }, as: :json
+    end
+
+    assert_response :unprocessable_content
+    assert_equal "invalid_device_info", response.parsed_body["error"]
+  end
+
+  test "a code request without device info doesn't count as a report" do
+    identifier = SecureRandom.uuid
+
+    post api_v1_devices_pairing_codes_url, headers: { "X-Device-Identifier" => identifier }, as: :json
+
+    assert_nil Device.find_by!(device_identifier: identifier).info_reported_at
+  end
 end

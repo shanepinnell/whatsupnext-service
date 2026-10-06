@@ -98,6 +98,13 @@ class Api::V1::Devices::InfosControllerTest < ActionDispatch::IntegrationTest
     assert_nil @device.network
   end
 
+  test "an empty report records nothing" do
+    post api_v1_devices_info_url, headers: auth_headers, as: :json
+
+    assert_response :no_content
+    assert_nil @device.reload.info_reported_at
+  end
+
   private
     def auth_headers
       { "Authorization" => "Bearer device-key" }

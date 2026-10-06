@@ -8,9 +8,10 @@ class Api::V1::Devices::PairingCodesController < Api::V1::BaseController
     device = Device.find_or_initialize_by(device_identifier: identifier)
     return render json: { error: "device_paired" }, status: :conflict if device.paired?
 
-    device.name = params[:name].presence || Device::DEFAULT_NAME if params.key?(:name)
+    device.assign_attributes(device_info_params)
     device.issue_pairing_code
-    device.save!
+    return render json: { error: "invalid_device_info" }, status: :unprocessable_content unless device.save
+
     render json: { code: device.pairing_code, expires_at: device.pairing_code_expires_at, poll_interval_seconds: POLL_INTERVAL_SECONDS }, status: :created
   end
 end
