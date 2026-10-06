@@ -1,28 +1,28 @@
 <% content_for :title, "Showing floor" %>
 
-<div class="md:w-2/3 w-full">
-  <%= render "shared/breadcrumbs", crumbs: [[@site.name, site_path(@site)], [@building.name, site_building_path(@site, @building)], ["Floors", site_building_floors_path(@site, @building)]] %>
+<%= render "shared/breadcrumbs", crumbs: [[@site.name, site_path(@site)], [@building.name, site_building_path(@site, @building)], ["Floors", site_building_floors_path(@site, @building)]] %>
 
-  <div class="flex items-center justify-between">
-    <h1 class="font-bold text-4xl flex items-center gap-3">
-      <%= icon "rectangle-stack", class: "h-9 w-9" %>
-      <%= @floor.name %>
-    </h1>
-    <div class="relative" data-controller="dropdown">
-      <button type="button" data-action="dropdown#toggle" class="w-8 h-8 rounded-full border border-gray-300 hover:bg-gray-100 flex items-center justify-center text-gray-500" aria-label="Floor actions">
-        <%= icon "ellipsis-vertical", class: "h-5 w-5" %>
-      </button>
-      <div data-dropdown-target="menu" class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-        <%= link_to edit_site_building_floor_path(@site, @building, @floor), class: "flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" do %>
-          <%= icon "pencil", class: "h-4 w-4" %> Edit
-        <% end %>
-        <%= button_to [ @site, @building, @floor ], method: :delete, class: "w-full flex items-center gap-2 text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 bg-transparent border-0 cursor-pointer", data: { turbo_confirm: "Are you sure?" } do %>
-          <%= icon "trash", class: "h-4 w-4" %> Destroy
-        <% end %>
-      </div>
+<div class="flex items-center justify-between">
+  <h1 class="font-bold text-4xl flex items-center gap-3">
+    <%= icon "rectangle-stack", class: "h-9 w-9" %>
+    <%= @floor.name %>
+  </h1>
+  <div class="relative" data-controller="dropdown">
+    <button type="button" data-action="dropdown#toggle" class="w-8 h-8 rounded-full border border-gray-300 hover:bg-gray-100 flex items-center justify-center text-gray-500" aria-label="Floor actions">
+      <%= icon "ellipsis-vertical", class: "h-5 w-5" %>
+    </button>
+    <div data-dropdown-target="menu" class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+      <%= link_to edit_site_building_floor_path(@site, @building, @floor), class: "flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" do %>
+        <%= icon "pencil", class: "h-4 w-4" %> Edit
+      <% end %>
+      <%= button_to [ @site, @building, @floor ], method: :delete, class: "w-full flex items-center gap-2 text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 bg-transparent border-0 cursor-pointer", data: { turbo_confirm: "Are you sure?" } do %>
+        <%= icon "trash", class: "h-4 w-4" %> Destroy
+      <% end %>
     </div>
   </div>
+</div>
 
+<div class="md:w-2/3 w-full">
   <h2 class="font-bold text-2xl mt-8 pl-4">
     <%= link_to site_building_floor_rooms_path(@site, @building, @floor), class: "flex items-center gap-3 hover:underline" do %>
       <%= icon "squares-2x2", class: "h-8 w-8" %> Rooms
