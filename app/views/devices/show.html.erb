@@ -30,27 +30,29 @@
 </div>
 
 <div class="md:w-2/3 w-full">
-  <% case @device.support_stage %>
-  <% when :losing_support %>
-    <div class="mt-5 flex gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">
-      <%= icon "exclamation-triangle", class: "h-5 w-5 shrink-0" %>
-      <p>Apple's next tvOS release drops the <%= @device.hardware_name %>. Support for this Apple TV ends 6 months after that release.</p>
-    </div>
-  <% when :deprecated %>
-    <div class="mt-5 flex gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">
-      <%= icon "exclamation-triangle", class: "h-5 w-5 shrink-0" %>
-      <p>The <%= @device.hardware_name %> no longer gets tvOS updates. Support ends <%= l @device.support_ends_on, format: :long %> — after that, this Apple TV stops showing room information unless an admin accepts the risk.</p>
-    </div>
-  <% when :unsupported %>
-    <div class="mt-5 flex gap-3 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-red-700">
-      <%= icon "exclamation-circle", class: "h-5 w-5 shrink-0" %>
-      <p>The <%= @device.hardware_name %> no longer gets security updates. Support ended <%= l @device.support_ends_on, format: :long %>, and this Apple TV no longer shows room information.</p>
+  <% stage = @device.support_stage %>
+  <% if stage != :supported && !@device.support_risk_accepted? %>
+    <div class="mt-5 flex items-start gap-3 rounded-md border px-4 py-3 <%= stage == :unsupported ? "border-red-200 bg-red-50 text-red-700" : "border-amber-200 bg-amber-50 text-amber-800" %>">
+      <%= icon (stage == :unsupported ? "exclamation-circle" : "exclamation-triangle"), class: "h-5 w-5 shrink-0" %>
+      <div class="flex-1 space-y-3">
+        <p>
+          <% case stage %>
+          <% when :losing_support %>
+            Apple's next tvOS release drops the <%= @device.hardware_name %>. Support for this Apple TV ends 6 months after that release.
+          <% when :deprecated %>
+            The <%= @device.hardware_name %> no longer gets tvOS updates. Support ends <%= l @device.support_ends_on, format: :long %> — after that, this Apple TV stops showing room information unless an admin accepts the risk.
+          <% when :unsupported %>
+            The <%= @device.hardware_name %> no longer gets security updates. Support ended <%= l @device.support_ends_on, format: :long %>, and this Apple TV no longer shows room information.
+          <% end %>
+        </p>
+        <%= button_to "Accept the risk", device_support_risk_acceptance_path(@device), class: "rounded-md border bg-white px-3 py-1.5 text-sm font-medium cursor-pointer #{stage == :unsupported ? "border-red-300 hover:bg-red-100" : "border-amber-300 hover:bg-amber-100"}", data: { turbo_confirm: "Keep using this Apple TV even though it's #{stage.to_s.humanize.downcase}?" } %>
+      </div>
     </div>
   <% end %>
   <% if @device.tvos_update_available? %>
-    <div class="mt-5 flex gap-3 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-blue-800">
-      <%= icon "arrow-path", class: "h-5 w-5 shrink-0" %>
-      <p>This Apple TV is on tvOS <%= @device.os_version %>. Update it in Settings → System → Software Updates to keep getting security fixes.</p>
+    <div class="mt-5 flex gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">
+      <%= icon "exclamation-triangle", class: "h-5 w-5 shrink-0" %>
+      <p>This Apple TV is on tvOS <%= @device.os_version %>. We recommend updating to keep getting security fixes.</p>
     </div>
   <% end %>
 
@@ -83,6 +85,12 @@
     <h2 class="font-bold text-2xl mt-8 flex items-center gap-3">
       <%= icon "cpu-chip", class: "h-7 w-7" %> Hardware &amp; software
     </h2>
+    <% if stage != :supported && @device.support_risk_accepted? %>
+      <p class="mt-3 flex items-center gap-2 text-sm text-gray-500">
+        <%= icon "shield-check", class: "h-4 w-4 shrink-0" %>
+        <%= stage.to_s.humanize %>: risk accepted by <%= @device.support_risk_accepted_by&.email_address || "a removed admin" %> on <%= l @device.support_risk_accepted_at.to_date, format: :long %>.
+      </p>
+    <% end %>
     <dl class="my-5 space-y-5">
       <% { "Model" => @device.hardware_name,
            "tvOS" => @device.os_version,

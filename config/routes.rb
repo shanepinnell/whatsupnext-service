@@ -8,7 +8,9 @@ Rails.application.routes.draw do
       end
     end
   end
-  resources :devices, except: %i[ new create ]
+  resources :devices, except: %i[ new create ] do
+    resource :support_risk_acceptance, only: :create
+  end
 
   root "organizations#show"
   resource :organization, only: [ :create, :edit, :update ]

@@ -14,10 +14,10 @@
           <% end %>
           <span class="text-sm text-gray-500"><%= device.status.humanize %> · <%= device.room&.name || "Unassigned" %></span>
           <% unless (stage = device.support_stage) == :supported %>
-            <span class="rounded-full px-2 py-0.5 text-xs font-medium <%= stage == :unsupported ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800" %>"><%= stage.to_s.humanize %></span>
+            <span class="rounded-full px-2 py-0.5 text-xs font-medium <%= device.support_risk_accepted? ? "bg-gray-100 text-gray-600" : stage == :unsupported ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800" %>"><%= stage.to_s.humanize %></span>
           <% end %>
           <% if device.tvos_update_available? %>
-            <span class="rounded-full px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800">Update tvOS</span>
+            <span class="rounded-full px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-800">Update tvOS</span>
           <% end %>
         </li>
       <% end %>
