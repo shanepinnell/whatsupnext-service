@@ -19,7 +19,7 @@ class BuildingsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create building" do
     assert_difference("Building.count") do
-      post site_buildings_url(@site), params: { building: { name: "Tower 3", timezone: "America/Chicago" } }
+      post site_buildings_url(@site), params: { building: { name: "Tower 3" } }
     end
 
     assert_redirected_to site_building_url(@site, Building.last)
@@ -36,7 +36,7 @@ class BuildingsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update building" do
-    patch site_building_url(@site, @building), params: { building: { name: @building.name, timezone: @building.timezone } }
+    patch site_building_url(@site, @building), params: { building: { name: @building.name } }
     assert_redirected_to site_building_url(@site, @building)
   end
 

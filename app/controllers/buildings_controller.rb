@@ -61,6 +61,6 @@ class BuildingsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def building_params
-      params.expect(building: [ :name, :timezone ])
+      params.expect(building: [ :name ])
     end
 end

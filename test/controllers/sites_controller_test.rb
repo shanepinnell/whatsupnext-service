@@ -18,7 +18,7 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create site" do
     assert_difference("Site.count") do
-      post sites_url, params: { site: { name: "Riverside Campus" } }
+      post sites_url, params: { site: { name: "Riverside Campus", timezone: "America/Chicago" } }
     end
 
     assert_redirected_to site_url(Site.last)
@@ -35,7 +35,7 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update site" do
-    patch site_url(@site), params: { site: { name: @site.name } }
+    patch site_url(@site), params: { site: { name: @site.name, timezone: @site.timezone } }
     assert_redirected_to site_url(@site)
   end
 

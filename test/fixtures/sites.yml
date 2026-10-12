@@ -1,7 +1,9 @@
 downtown:
   name: Downtown Campus
+  timezone: America/Chicago
   organization: acme
 
 midtown:
   name: Midtown Campus
+  timezone: America/Chicago
   organization: acme

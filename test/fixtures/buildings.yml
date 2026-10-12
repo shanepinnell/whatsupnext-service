@@ -1,14 +1,11 @@
 tower_one:
   name: Tower 1
-  timezone: America/Chicago
   site: downtown
 
 tower_two:
   name: Tower 2
-  timezone: America/Chicago
   site: downtown
 
 riverside:
   name: Riverside
-  timezone: America/Chicago
   site: downtown

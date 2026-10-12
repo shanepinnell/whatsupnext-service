@@ -7,7 +7,7 @@ class FloorTest < ActiveSupport::TestCase
   end
 
   test "invalid without a name" do
-    building = Building.new(name: "Tower 1", timezone: "America/Chicago")
+    building = Building.new(name: "Tower 1")
     floor = Floor.new(building: building)
     assert_not floor.valid?
     assert_includes floor.errors[:name], "can't be blank"

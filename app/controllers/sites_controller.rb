@@ -56,6 +56,6 @@ class SitesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def site_params
-      params.expect(site: [ :name ])
+      params.expect(site: [ :name, :timezone ])
     end
 end

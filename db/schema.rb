@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_06_064147) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_235556) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -51,7 +51,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_064147) do
 
   create_table "buildings", force: :cascade do |t|
     t.string "name"
-    t.string "timezone"
     t.integer "site_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -143,6 +142,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_064147) do
     t.integer "organization_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "timezone"
     t.index ["organization_id", "name"], name: "index_sites_on_organization_id_and_name", unique: true
     t.index ["organization_id"], name: "index_sites_on_organization_id"
   end
