@@ -2,12 +2,10 @@ class Api::V1::DevicesController < Api::V1::BaseController
   POLL_INTERVAL_SECONDS = 5
 
   before_action :authenticate_device, only: :update
+  before_action :require_device_identifier, only: %i[ create pairing_status ]
 
   def create
-    identifier = request.headers["X-Device-Identifier"]
-    return render json: { error: "missing_device_identifier" }, status: :bad_request if identifier.blank?
-
-    device = Device.find_or_initialize_by(device_identifier: identifier)
+    device = Device.find_or_initialize_by(device_identifier: @device_identifier)
     return render json: { error: "device_paired" }, status: :conflict if device.paired?
 
     device.assign_attributes(device_info_params)
@@ -18,10 +16,7 @@ class Api::V1::DevicesController < Api::V1::BaseController
   end
 
   def pairing_status
-    identifier = request.headers["X-Device-Identifier"]
-    return render json: { error: "missing_device_identifier" }, status: :bad_request if identifier.blank?
-
-    device = Device.find_by(device_identifier: identifier)
+    device = Device.find_by(device_identifier: @device_identifier)
     return render json: { error: "unknown_device" }, status: :not_found unless device
     return render json: { status: "pending" } if device.pending?
 
@@ -35,4 +30,10 @@ class Api::V1::DevicesController < Api::V1::BaseController
       render json: { error: "invalid_device_info" }, status: :unprocessable_content
     end
   end
+
+  private
+    def require_device_identifier
+      @device_identifier = request.headers["X-Device-Identifier"]
+      render json: { error: "missing_device_identifier" }, status: :bad_request if @device_identifier.blank?
+    end
 end
