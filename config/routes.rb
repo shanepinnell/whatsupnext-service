@@ -23,7 +23,9 @@ Rails.application.routes.draw do
       resources :devices, only: :create do
         get :pairing_status, on: :collection
       end
-      resource :device, only: :update
+      resource :device, only: :update do
+        resource :room, only: :show
+      end
     end
   end
 
