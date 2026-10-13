@@ -9,7 +9,16 @@ class Api::V1::RoomsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_device_room_url, headers: auth_headers, as: :json
 
     assert_response :success
-    assert_equal({ "room" => { "name" => rooms(:summit).name, "timezone" => "America/Chicago" } }, response.parsed_body)
+    assert_equal({ "room" => { "name" => rooms(:summit).name, "timezone" => "America/Chicago", "background_image_url" => nil } }, response.parsed_body)
+  end
+
+  test "returns the room's background image url" do
+    rooms(:summit).background_image.attach(io: file_fixture("background_1920x1080.png").open, filename: "background_1920x1080.png", content_type: "image/png")
+
+    get api_v1_device_room_url, headers: auth_headers, as: :json
+
+    assert_response :success
+    assert_equal rails_blob_url(rooms(:summit).background_image), response.parsed_body.dig("room", "background_image_url")
   end
 
   test "records when the device was last seen" do
