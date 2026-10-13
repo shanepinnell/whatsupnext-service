@@ -37,6 +37,20 @@ class CalendarSourceTest < ActiveSupport::TestCase
     assert_includes dup.errors[:room], "has already been taken"
   end
 
+  test "valid as ics with an https url" do
+    calendar_source = CalendarSource.new(provider: :ics, config: { "url" => "https://calendar.example.com/private/abc.ics" }, room: persisted_room)
+    assert calendar_source.valid?
+  end
+
+  test "invalid as ics without an https url" do
+    room = persisted_room
+    [ "http://calendar.example.com/private/abc.ics", "not a url", nil ].each do |url|
+      calendar_source = CalendarSource.new(provider: :ics, config: { "url" => url }, room: room)
+      assert_not calendar_source.valid?, "expected #{url.inspect} to be invalid"
+      assert_includes calendar_source.errors[:config], "must be an https URL"
+    end
+  end
+
   test "credential_digest is the same for the same config regardless of key order" do
     a = CalendarSource.new(provider: :google, config: { "calendar_id" => "abc", "refresh_token" => "r1" })
     b = CalendarSource.new(provider: :google, config: { "refresh_token" => "r1", "calendar_id" => "abc" })
