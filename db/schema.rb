@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_235556) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_13_040517) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -61,7 +61,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_235556) do
   create_table "calendar_sources", force: :cascade do |t|
     t.integer "provider"
     t.text "config"
-    t.integer "credential_version", default: 0, null: false
     t.string "webhook_subscription_id"
     t.datetime "webhook_expires_at"
     t.datetime "last_reported_at"

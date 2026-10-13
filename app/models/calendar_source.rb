@@ -10,11 +10,11 @@ class CalendarSource < ApplicationRecord
   validates :config, presence: true
   validates :room, uniqueness: true
 
-  before_save :bump_credential_version, if: -> { persisted? && config_changed? }
+  def credential_digest
+    OpenSSL::HMAC.hexdigest("SHA256", self.class.credential_digest_key, config.sort.to_h.to_json)
+  end
 
-  private
-
-  def bump_credential_version
-    self.credential_version += 1
+  def self.credential_digest_key
+    @credential_digest_key ||= Rails.application.key_generator.generate_key("calendar_source credential_digest")
   end
 end

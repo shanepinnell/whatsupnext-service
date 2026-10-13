@@ -37,21 +37,24 @@ class CalendarSourceTest < ActiveSupport::TestCase
     assert_includes dup.errors[:room], "has already been taken"
   end
 
-  test "credential_version defaults to 0" do
-    calendar_source = CalendarSource.create!(provider: :google, config: { "calendar_id" => "abc" }, room: persisted_room)
-    assert_equal 0, calendar_source.credential_version
+  test "credential_digest is the same for the same config regardless of key order" do
+    a = CalendarSource.new(provider: :google, config: { "calendar_id" => "abc", "refresh_token" => "r1" })
+    b = CalendarSource.new(provider: :google, config: { "refresh_token" => "r1", "calendar_id" => "abc" })
+    assert_equal a.credential_digest, b.credential_digest
   end
 
-  test "credential_version bumps when config changes" do
-    calendar_source = CalendarSource.create!(provider: :google, config: { "calendar_id" => "abc" }, room: persisted_room)
-    calendar_source.update!(config: { "calendar_id" => "xyz" })
-    assert_equal 1, calendar_source.credential_version
+  test "credential_digest changes when config changes" do
+    calendar_source = CalendarSource.new(provider: :google, config: { "calendar_id" => "abc", "refresh_token" => "r1" })
+    before = calendar_source.credential_digest
+    calendar_source.config = { "calendar_id" => "abc", "refresh_token" => "r2" }
+    assert_not_equal before, calendar_source.credential_digest
   end
 
-  test "credential_version does not bump when config is unchanged" do
-    calendar_source = CalendarSource.create!(provider: :google, config: { "calendar_id" => "abc" }, room: persisted_room)
-    calendar_source.update!(webhook_subscription_id: "sub_123")
-    assert_equal 0, calendar_source.credential_version
+  test "credential_digest is a keyed HMAC, not a plain hash of config" do
+    config = { "calendar_id" => "abc", "refresh_token" => "r1" }
+    calendar_source = CalendarSource.new(provider: :google, config: config)
+    assert_match(/\A\h{64}\z/, calendar_source.credential_digest)
+    assert_not_equal Digest::SHA256.hexdigest(config.sort.to_h.to_json), calendar_source.credential_digest
   end
 
   test "encrypts config" do
