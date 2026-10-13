@@ -1,7 +1,7 @@
-class Api::V1::Devices::InfosController < Api::V1::BaseController
+class Api::V1::DevicesController < Api::V1::BaseController
   before_action :authenticate_device
 
-  def create
+  def update
     if @device.update(device_info_params)
       head :no_content
     else
