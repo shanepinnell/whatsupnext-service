@@ -24,7 +24,9 @@ Rails.application.routes.draw do
         get :pairing_status, on: :collection
       end
       resource :device, only: :update do
-        resource :room, only: :show
+        resource :room, only: :show do
+          resource :calendar_source, only: :show
+        end
       end
     end
   end
