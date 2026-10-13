@@ -9,7 +9,16 @@ class Api::V1::RoomsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_device_room_url, headers: auth_headers, as: :json
 
     assert_response :success
-    assert_equal({ "room" => { "name" => rooms(:summit).name, "timezone" => "America/Chicago", "background_image_url" => nil } }, response.parsed_body)
+    assert_equal({ "room" => { "name" => rooms(:summit).name, "timezone" => "America/Chicago", "background_image_url" => nil, "calendar_source" => nil } }, response.parsed_body)
+  end
+
+  test "includes the calendar source provider and credential digest, never the config" do
+    calendar_source = CalendarSource.create!(room: rooms(:summit), provider: :google, config: { "calendar_id" => "abc", "refresh_token" => "r1" })
+
+    get api_v1_device_room_url, headers: auth_headers, as: :json
+
+    assert_response :success
+    assert_equal({ "provider" => "google", "credential_digest" => calendar_source.credential_digest }, response.parsed_body.dig("room", "calendar_source"))
   end
 
   test "returns the room's background image url" do
