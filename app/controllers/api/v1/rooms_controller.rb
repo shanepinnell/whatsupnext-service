@@ -1,10 +1,7 @@
 class Api::V1::RoomsController < Api::V1::BaseController
-  before_action :authenticate_device
+  before_action :authenticate_device, :record_heartbeat, :block_unsupported_device
 
   def show
-    @device.touch(:last_seen_at)
-    return render json: { error: "unsupported_device" }, status: :forbidden if @device.support_stage == :unsupported && !@device.support_risk_accepted?
-
     room = @device.room
     calendar_source = room.calendar_source
     render json: { room: {
@@ -14,4 +11,9 @@ class Api::V1::RoomsController < Api::V1::BaseController
       calendar_source: (calendar_source && { provider: calendar_source.provider, credential_digest: calendar_source.credential_digest })
     } }
   end
+
+  private
+    def record_heartbeat
+      @device.touch(:last_seen_at)
+    end
 end

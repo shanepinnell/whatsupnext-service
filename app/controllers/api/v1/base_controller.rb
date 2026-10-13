@@ -7,6 +7,10 @@ class Api::V1::BaseController < ActionController::API
       render json: { error: "invalid_api_key" }, status: :unauthorized unless @device
     end
 
+    def block_unsupported_device
+      render json: { error: "unsupported_device" }, status: :forbidden if @device.support_stage == :unsupported && !@device.support_risk_accepted?
+    end
+
     def device_info_params
       info = params.permit(:name, :model_identifier, :os_version, :app_version, :network, display: %i[ width height hdr ])
       return info if info.empty?
