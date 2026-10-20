@@ -6,6 +6,24 @@
     </div>
   <% end %>
   <div>
+    <strong class="block font-medium mb-1">Calendar:</strong>
+    <% if room.calendar_source&.ics? %>
+      <details class="group">
+        <summary class="list-none inline-flex items-baseline gap-2 cursor-pointer text-gray-700" aria-label="Show or hide calendar URL">
+          ICS
+          <span class="group-open:hidden inline-flex items-baseline gap-3" title="Click to display the full calendar URL">
+            <%= icon "eye", class: "h-4 w-4 shrink-0 self-center" %>
+            <%= URI.parse(room.calendar_source.url).host %>/••••••••
+          </span>
+          <span class="hidden group-open:inline-flex items-baseline gap-3" title="Click to hide the calendar URL">
+            <%= icon "eye-slash", class: "h-4 w-4 shrink-0" %>
+            <span class="break-all"><%= room.calendar_source.url %></span>
+          </span>
+        </summary>
+      </details>
+    <% end %>
+  </div>
+  <div>
     <strong class="block font-medium mb-1">Background image:</strong>
     <%= link_to room.background_image.filename, room.background_image, class: "text-gray-700 underline hover:no-underline" if room.background_image.attached? %>
   </div>
