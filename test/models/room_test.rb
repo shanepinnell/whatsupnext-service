@@ -89,6 +89,12 @@ class RoomTest < ActiveSupport::TestCase
     assert_nil room.reload.calendar_source
   end
 
+  test "ignores a blank calendar source when it has none" do
+    room = rooms(:summit)
+    room.update!(calendar_source_attributes: { provider: "ics", url: "" })
+    assert_nil room.reload.calendar_source
+  end
+
   test "invalid with an invalid calendar source" do
     room = rooms(:summit)
     room.calendar_source_attributes = { provider: "ics", url: "http://calendar.example.com/private/abc.ics" }
