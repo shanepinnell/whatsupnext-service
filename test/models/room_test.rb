@@ -68,6 +68,34 @@ class RoomTest < ActiveSupport::TestCase
     assert_not room_with_background("not_an_image.txt", content_type: "text/plain").valid?
   end
 
+  test "creates its calendar source through nested attributes" do
+    room = rooms(:summit)
+    room.update!(calendar_source_attributes: { provider: "ics", url: "https://calendar.example.com/private/abc.ics" })
+    assert_equal "https://calendar.example.com/private/abc.ics", room.reload.calendar_source.url
+  end
+
+  test "updates its existing calendar source rather than replacing it" do
+    room = rooms(:summit)
+    calendar_source = CalendarSource.create!(room: room, provider: :google, config: { "calendar_id" => "abc", "refresh_token" => "r1" })
+    room.update!(calendar_source_attributes: { provider: "ics", url: "https://calendar.example.com/private/abc.ics" })
+    assert_equal calendar_source.id, room.reload.calendar_source.id
+    assert_equal({ "url" => "https://calendar.example.com/private/abc.ics" }, room.calendar_source.config)
+  end
+
+  test "removes its calendar source through nested attributes" do
+    room = rooms(:summit)
+    CalendarSource.create!(room: room, provider: :ics, url: "https://calendar.example.com/private/abc.ics")
+    room.update!(calendar_source_attributes: { _destroy: "1" })
+    assert_nil room.reload.calendar_source
+  end
+
+  test "invalid with an invalid calendar source" do
+    room = rooms(:summit)
+    room.calendar_source_attributes = { provider: "ics", url: "http://calendar.example.com/private/abc.ics" }
+    assert_not room.valid?
+    assert_includes room.errors[:"calendar_source.config"], "must be an https URL"
+  end
+
   private
     def room_with_background(filename, content_type: "image/png")
       floor = Floor.create!(name: "1", building: buildings(:tower_one))

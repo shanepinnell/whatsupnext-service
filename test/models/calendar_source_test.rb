@@ -51,6 +51,17 @@ class CalendarSourceTest < ActiveSupport::TestCase
     end
   end
 
+  test "url reads the config's url" do
+    calendar_source = CalendarSource.new(provider: :ics, config: { "url" => "https://calendar.example.com/private/abc.ics" })
+    assert_equal "https://calendar.example.com/private/abc.ics", calendar_source.url
+  end
+
+  test "setting url replaces the config, dropping any other provider's credentials" do
+    calendar_source = CalendarSource.new(provider: :google, config: { "calendar_id" => "abc", "refresh_token" => "r1" })
+    calendar_source.url = "https://calendar.example.com/private/abc.ics"
+    assert_equal({ "url" => "https://calendar.example.com/private/abc.ics" }, calendar_source.config)
+  end
+
   test "credential_digest is the same for the same config regardless of key order" do
     a = CalendarSource.new(provider: :google, config: { "calendar_id" => "abc", "refresh_token" => "r1" })
     b = CalendarSource.new(provider: :google, config: { "refresh_token" => "r1", "calendar_id" => "abc" })

@@ -42,6 +42,29 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to site_building_floor_room_url(@site, @building, @floor, @room)
   end
 
+  test "should update room with an ics calendar source" do
+    patch site_building_floor_room_url(@site, @building, @floor, @room), params: { room: { calendar_source_attributes: { provider: "ics", url: "https://calendar.example.com/private/abc.ics" } } }
+
+    assert_redirected_to site_building_floor_room_url(@site, @building, @floor, @room)
+    assert_equal "https://calendar.example.com/private/abc.ics", @room.reload.calendar_source.url
+  end
+
+  test "should remove a room's calendar source" do
+    CalendarSource.create!(room: @room, provider: :ics, url: "https://calendar.example.com/private/abc.ics")
+
+    patch site_building_floor_room_url(@site, @building, @floor, @room), params: { room: { calendar_source_attributes: { _destroy: "1" } } }
+
+    assert_redirected_to site_building_floor_room_url(@site, @building, @floor, @room)
+    assert_nil @room.reload.calendar_source
+  end
+
+  test "should not update room with an http calendar url" do
+    patch site_building_floor_room_url(@site, @building, @floor, @room), params: { room: { calendar_source_attributes: { provider: "ics", url: "http://calendar.example.com/private/abc.ics" } } }
+
+    assert_response :unprocessable_content
+    assert_nil @room.reload.calendar_source
+  end
+
   test "should destroy room" do
     assert_difference("Room.count", -1) do
       delete site_building_floor_room_url(@site, @building, @floor, @room)

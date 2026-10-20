@@ -71,6 +71,6 @@ class RoomsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def room_params
-      params.expect(room: [ :name, :background_image ])
+      params.expect(room: [ :name, :background_image, calendar_source_attributes: [ :provider, :url, :_destroy ] ])
     end
 end
