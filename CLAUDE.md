@@ -27,7 +27,11 @@ this repository.
   footprint, since this app ships to self-hosting customers and
   shouldn't carry any `.env`-loading convention they could mistake for a
   production pattern).
-  - Setup: `curl -sfS https://dotenvx.sh | sh && dotenvx ext precommit --install`.
+  - Setup: `curl -sfS https://dotenvx.sh | sh && dotenvx protect` —
+    installs a global git filter that refuses to `git add` any `.env*`
+    file containing plaintext secrets (in every repo on the machine).
+    The filter is pinned to the installed dotenvx binary's path, so
+    re-run `dotenvx protect` after upgrading dotenvx.
   - **`service/.env` holds real values only encrypted** — created once via
     `dotenvx encrypt -f .env` (converts plaintext values to ciphertext in
     place). Encrypted, it's safe to sit inside the repo, gitignored as a
